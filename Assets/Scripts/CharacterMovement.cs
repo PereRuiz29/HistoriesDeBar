@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
+//using UnityEngine.InputSystem;
 
 public class CharacterMovement : MonoBehaviour
 {
@@ -21,7 +21,7 @@ public class CharacterMovement : MonoBehaviour
         m_CharacterMovement = gameObject.GetComponent<CharacterController>();
         m_camera = GameObject.Find("Main Camera");
 
-        Debug.Log("Camera: " + m_camera.transform.position + m_camera.transform.rotation);
+        Debug.Log("Camera: " + m_camera.transform.position + " " + m_camera.transform.rotation);
     }
 
     void Update()
@@ -32,10 +32,14 @@ public class CharacterMovement : MonoBehaviour
             m_Movement.y = 0;
 
 
-        float cameraAngle = m_camera.transform.rotation.y;
+        float cameraAngle = m_camera.transform.eulerAngles.y;
         Vector3 aaa = Quaternion.AngleAxis(cameraAngle, Vector3.up) * m_Movement;
         //m_CharacterMovement.Move(Quaternion.AngleAxis(m_camera.transform.rotation.y, Vector3.up) * m_Movement * Time.deltaTime);
         m_CharacterMovement.Move(aaa * Time.deltaTime);
+
+        transform.LookAt(m_camera.transform);
+        transform.eulerAngles = new Vector3(0, cameraAngle, 0);
+
 
         Debug.Log("Camera: " + m_camera.transform.rotation.y);
         Debug.Log("Moviment: " + m_Movement);
@@ -44,9 +48,11 @@ public class CharacterMovement : MonoBehaviour
 
     }
 
+    /*
     public void OnMove(InputAction.CallbackContext context)
     {
         m_InputVector = context.ReadValue<Vector2>();
         m_Movement = new Vector3(m_InputVector.x * m_speed, 0, m_InputVector.y * m_speed);
     }
+    */
 }
