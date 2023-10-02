@@ -18,6 +18,8 @@ public class CharacterMovement : MonoBehaviour
 
     void Start()
     {
+        Debug.Log("Start");
+
         m_CharacterMovement = gameObject.GetComponent<CharacterController>();
         m_camera = GameObject.Find("Main Camera");
     }
@@ -35,6 +37,8 @@ public class CharacterMovement : MonoBehaviour
     //read impunt and return movement vector3
     public void OnMove(InputAction.CallbackContext context)
     {
+        Debug.Log("OnMove");
+
         m_InputVector = context.ReadValue<Vector2>();
 
         float cameraAngle = m_camera.transform.eulerAngles.y;
