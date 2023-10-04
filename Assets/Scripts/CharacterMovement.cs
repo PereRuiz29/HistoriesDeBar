@@ -27,6 +27,7 @@ public class CharacterMovement : MonoBehaviour
     void Update()
     {
         //aplly deltatime inside simplemove metode
+        if (m_Movement != Vector3.zero) Debug.Log("MOOOOOVE");
         m_CharacterMovement.SimpleMove(m_Movement);
 
         //rotate sprite to look at camer, (have to implemented in another script)
@@ -44,6 +45,8 @@ public class CharacterMovement : MonoBehaviour
         float cameraAngle = m_camera.transform.eulerAngles.y;
         m_Movement = new Vector3(m_InputVector.x * m_speed, 0, m_InputVector.y * m_speed);
         m_Movement = Quaternion.AngleAxis(cameraAngle, Vector3.up) * m_Movement;
+
+        Debug.Log("input: " + m_InputVector + "  movement: " + m_Movement);
     }
 
 }
