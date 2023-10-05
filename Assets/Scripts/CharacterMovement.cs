@@ -26,6 +26,9 @@ public class CharacterMovement : MonoBehaviour
 
     void Update()
     {
+        if (DialogueManager.GetInstance().dialogueIsPlaying)
+            return;
+
         m_CharacterMovement.Move(m_Movement * Time.deltaTime);
 
         //rotate sprite to look at camera, (have to implemented in another script)
