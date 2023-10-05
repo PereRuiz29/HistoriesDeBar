@@ -24,39 +24,29 @@ public class DialogueTrigger : MonoBehaviour
         m_VisualClue.SetActive(false);
     }
 
-    private void Update()
+    public void patata()
     {
         if (m_playerInRange & !DialogueManager.GetInstance().dialogueIsPlaying)
         {
-            m_VisualClue.SetActive(true);
-            if (m_trigger)
-            {
-                DialogueManager.GetInstance().EnterDialogueMode(m_inkJSON);
-                m_trigger = false;
-            }
-        }
-        else
-        {
-            m_VisualClue.SetActive(false);
+            DialogueManager.GetInstance().EnterDialogueMode(m_inkJSON);
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Player")
+        {
             m_playerInRange = true;
+            m_VisualClue.SetActive(true);
+        }
     }
 
     private void OnTriggerExit(Collider other)
     {
         if (other.tag == "Player")
+        {
             m_playerInRange = false;
+            m_VisualClue.SetActive(false);
+        }
     }
-
-    [ContextMenu("triggerText")]
-    private void triggerText()
-    {
-        m_trigger = true;
-    }
-
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Ink.Runtime;
+using UnityEngine.EventSystems;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -92,6 +93,8 @@ public class DialogueManager : MonoBehaviour
         if (currentStory.canContinue)
         {
             dialogueText.text = currentStory.Continue();
+
+            DisplayChoices();
         }
         else
         {
@@ -123,14 +126,17 @@ public class DialogueManager : MonoBehaviour
             index++;
         }
 
+        //amagar opcions no utilitzades
         for (int i = index; i < ChoicesText.Length; i++)
         {
-
+            m_choices[i].gameObject.SetActive(false);
         }
 
-
-         
-
+        EventSystem.current.SetSelectedGameObject(m_choices[0]);
     }
 
+    public void MakeChoice(int choiceIndex)
+    {
+        currentStory.ChooseChoiceIndex(choiceIndex);
+    }
 }

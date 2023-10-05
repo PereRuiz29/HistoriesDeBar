@@ -1,8 +1,8 @@
--Aixo es un prova de dialeg amb ink.
--Ha funcionat?
- * [Si]
+Aixo es un prova de dialeg amb ink.
+Ha funcionat?
+ + [Si]
     vaale bien
- * [No]
+ + [No]
     puta merda
 
 - Que te cuides

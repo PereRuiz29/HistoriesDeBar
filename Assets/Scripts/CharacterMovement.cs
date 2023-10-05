@@ -47,4 +47,9 @@ public class CharacterMovement : MonoBehaviour
         float cameraAngle = m_camera.transform.eulerAngles.y;
         m_Movement = Quaternion.AngleAxis(cameraAngle, Vector3.up) * m_Movement; 
     }
+
+    public void OnInteract()
+    {
+
+    }
 }
