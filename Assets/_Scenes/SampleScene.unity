@@ -123,6 +123,53 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &226567855
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 226567856}
+  - component: {fileID: 226567857}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &226567856
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 226567855}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.6818194, y: 4.2674046, z: -10.548546}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &226567857
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 226567855}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a8f0aff76fbbad42b440d17538e941d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_playerInput: {fileID: 440316235}
+  m_dialogueInput: {fileID: 255462785}
+  m_pauseInput: {fileID: 0}
 --- !u!1 &255462782
 GameObject:
   m_ObjectHideFlags: 0
@@ -153,6 +200,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c850e14ebf63f6648b4070bb905ebecf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameManager: {fileID: 0}
   dialoguePanel: {fileID: 1931148053}
   dialogueText: {fileID: 1124186683}
   m_choices:
@@ -221,11 +269,15 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-    m_ActionId: 6d9d1bc5-8333-4170-b5d9-172558698a4d
-    m_ActionName: Player/Continue[/Keyboard/c]
+    m_ActionId: 178d5a56-ffb2-46c4-8b0a-ab12107418d3
+    m_ActionName: Dialogue/Continue[/Keyboard/space,/Keyboard/e]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 83ff1ae5-0ee9-4cd1-b665-bd2ab7c7206a
+    m_ActionName: Dialogue/Submit[/Keyboard/space,/Keyboard/e]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
-  m_DefaultActionMap: Player
+  m_DefaultActionMap: Dialogue
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
 --- !u!1 &279664195
@@ -540,8 +592,12 @@ MonoBehaviour:
     m_ActionName: Player/Interact[/Keyboard/e]
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: 6d9d1bc5-8333-4170-b5d9-172558698a4d
-    m_ActionName: Player/Continue[/Keyboard/c]
+    m_ActionId: 178d5a56-ffb2-46c4-8b0a-ab12107418d3
+    m_ActionName: Dialogue/Continue[/Keyboard/space,/Keyboard/e]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 83ff1ae5-0ee9-4cd1-b665-bd2ab7c7206a
+    m_ActionName: Dialogue/Submit[/Keyboard/space,/Keyboard/e]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -1961,6 +2017,14 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 6d9d1bc5-8333-4170-b5d9-172558698a4d
     m_ActionName: Player/Continue[/Keyboard/c]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 178d5a56-ffb2-46c4-8b0a-ab12107418d3
+    m_ActionName: Dialogue/Continue[/Keyboard/e]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 83ff1ae5-0ee9-4cd1-b665-bd2ab7c7206a
+    m_ActionName: Dialogue/Submit[/Keyboard/e]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -2273,3 +2337,4 @@ SceneRoots:
   - {fileID: 255462784}
   - {fileID: 1297169177}
   - {fileID: 1042420369}
+  - {fileID: 226567856}

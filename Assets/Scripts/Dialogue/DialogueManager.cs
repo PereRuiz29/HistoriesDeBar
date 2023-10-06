@@ -9,6 +9,8 @@ public class DialogueManager : MonoBehaviour
 {
     private static DialogueManager instance;
 
+    [SerializeField] private GameObject gameManager;
+
     [Header("Dialogue UI")]
     [SerializeField] private GameObject dialoguePanel;
     [SerializeField] private TextMeshProUGUI dialogueText;
@@ -66,17 +68,19 @@ public class DialogueManager : MonoBehaviour
             return;
 
         if (m_continue) //if submite button
-            CotinueStory();
+            ContinueStory();
         m_continue = false;
     }
 
     public void EnterDialogueMode(TextAsset inkJSON)
     {
+        GameManager.GetInstance().EnterDialogue();
+
         currentStory = new Story(inkJSON.text);
         m_dialogueIsPlaying = true;
         dialoguePanel.SetActive(true);
 
-        CotinueStory();
+        ContinueStory();
     }
 
     private IEnumerator ExitDialogueMode()
@@ -88,7 +92,7 @@ public class DialogueManager : MonoBehaviour
         dialogueText.text = "";
     }
 
-    private void CotinueStory()
+    private void ContinueStory()
     {
         if (currentStory.canContinue)
         {
@@ -105,7 +109,7 @@ public class DialogueManager : MonoBehaviour
     [ContextMenu("Continue")]
     public void Continue()
     {
-        m_continue = true;
+        ContinueStory();
     }
 
     private void DisplayChoices()
