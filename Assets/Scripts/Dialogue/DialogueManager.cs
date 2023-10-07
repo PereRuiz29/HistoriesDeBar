@@ -4,37 +4,36 @@ using UnityEngine;
 using TMPro;
 using Ink.Runtime;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class DialogueManager : MonoBehaviour
 {
     private static DialogueManager instance;
 
-    [SerializeField] private GameObject gameManager;
+    [SerializeField] private GameObject m_gameManager;
 
     [Header("Dialogue UI")]
-    [SerializeField] private GameObject dialoguePanel;
-    [SerializeField] private TextMeshProUGUI dialogueText;
+    [SerializeField] private GameObject m_dialoguePanel;
+    [SerializeField] private TextMeshProUGUI m_dialogueText;
+    [SerializeField] private float m_ExitDialogueTime;
 
     [Header("Choices UI")]
     [SerializeField] private GameObject[] m_choices;
-    private TextMeshProUGUI[] ChoicesText;
+    private TextMeshProUGUI[] m_ChoicesText;
 
-    [SerializeField] private float m_ExitDialogueTime;
-
-    private Story currentStory;
+    private Story m_currentStory;
     private bool m_dialogueIsPlaying;
+    private bool m_optionDisplay;
 
     //accessor
     public bool dialogueIsPlaying => m_dialogueIsPlaying;
-
-
-    private bool m_continue;
 
     private void Awake()
     {
         if (instance != null)
         {
-            Debug.LogWarning("Found more than one Dialogue Manger in the scene!");
+            Debug.LogError("Found more than one Dialogue Manger in the scene!");
         }
         instance = this;
     }
@@ -47,38 +46,27 @@ public class DialogueManager : MonoBehaviour
 
     private void Start()
     {
-        m_continue = false;
-
         m_dialogueIsPlaying = false;
-        dialoguePanel.SetActive(false);
+        m_optionDisplay = false;
+        m_dialoguePanel.SetActive(false);
 
-        ChoicesText = new TextMeshProUGUI[m_choices.Length];
+        m_ChoicesText = new TextMeshProUGUI[m_choices.Length];
         int index = 0;
         foreach(GameObject choice in m_choices)
         {
-            ChoicesText[index] = choice.GetComponentInChildren<TextMeshProUGUI>();
+            m_ChoicesText[index] = choice.GetComponentInChildren<TextMeshProUGUI>();
             index++;
         }
-
-    }
-
-    private void Update()
-    {
-        if (!m_dialogueIsPlaying)
-            return;
-
-        if (m_continue) //if submite button
-            ContinueStory();
-        m_continue = false;
     }
 
     public void EnterDialogueMode(TextAsset inkJSON)
     {
+        //change action map
         GameManager.GetInstance().EnterDialogue();
 
-        currentStory = new Story(inkJSON.text);
+        m_currentStory = new Story(inkJSON.text);
         m_dialogueIsPlaying = true;
-        dialoguePanel.SetActive(true);
+        m_dialoguePanel.SetActive(true);
 
         ContinueStory();
     }
@@ -87,16 +75,19 @@ public class DialogueManager : MonoBehaviour
     {
         yield return new WaitForSeconds(m_ExitDialogueTime);
 
+        //change action map
+        GameManager.GetInstance().ExitDialogue();
+
         m_dialogueIsPlaying = false;
-        dialoguePanel.SetActive(false);
-        dialogueText.text = "";
+        m_dialoguePanel.SetActive(false);
+        m_dialogueText.text = "";
     }
 
     private void ContinueStory()
     {
-        if (currentStory.canContinue)
+        if (m_currentStory.canContinue)
         {
-            dialogueText.text = currentStory.Continue();
+            m_dialogueText.text = m_currentStory.Continue();
 
             DisplayChoices();
         }
@@ -107,17 +98,23 @@ public class DialogueManager : MonoBehaviour
     }
 
     [ContextMenu("Continue")]
-    public void Continue()
+    public void OnContinue(InputAction.CallbackContext context)
     {
-        ContinueStory();
+        if (context.performed & !m_optionDisplay)
+            ContinueStory();
     }
 
     private void DisplayChoices()
     {
-        List<Choice> currentChoices = currentStory.currentChoices;
+        List<Choice> currentChoices = m_currentStory.currentChoices;
+
+        if (currentChoices.Count == 0)
+            m_optionDisplay = false;
+        else
+            m_optionDisplay = true;
 
         //en ficarho en menu modal arreglara aixo
-        if(currentChoices.Count > ChoicesText.Length)
+        if (currentChoices.Count > m_ChoicesText.Length)
         {
             Debug.Log("La UI es cutrilla i ara mateix no da pa mes de dues opcions. Nombre de opcions que demana: " + currentChoices.Count);
         }
@@ -126,21 +123,34 @@ public class DialogueManager : MonoBehaviour
         foreach(Choice choice in currentChoices)
         {
             m_choices[index].gameObject.SetActive(true);
-            ChoicesText[index].text = choice.text;
+            m_choices[index].GetComponent<Button>().enabled = false;
+            m_ChoicesText[index].text = choice.text;
             index++;
         }
 
         //amagar opcions no utilitzades
-        for (int i = index; i < ChoicesText.Length; i++)
+        for (int i = index; i < m_ChoicesText.Length; i++)
         {
             m_choices[i].gameObject.SetActive(false);
         }
 
         EventSystem.current.SetSelectedGameObject(m_choices[0]);
+        StartCoroutine(EnableButtons());
+    }
+
+    private IEnumerator EnableButtons()
+    {
+        yield return new WaitForSeconds(m_ExitDialogueTime);
+
+        for (int i = 0; i < m_currentStory.currentChoices.Count; i++)
+        {
+            m_choices[i].GetComponent<Button>().enabled = true;
+        }
     }
 
     public void MakeChoice(int choiceIndex)
     {
-        currentStory.ChooseChoiceIndex(choiceIndex);
+        m_currentStory.ChooseChoiceIndex(choiceIndex);
+        ContinueStory();
     }
 }

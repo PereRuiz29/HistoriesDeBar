@@ -5,5 +5,11 @@ Ha funcionat?
  + [No]
     puta merda
 
+- Segurt?
+ + [que si pesao]
+    vaale vale perdo
+ + [no]
+    joodeer i aara que es
+
 - Que te cuides
     -> END

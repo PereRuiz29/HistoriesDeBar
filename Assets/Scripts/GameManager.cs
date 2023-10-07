@@ -8,7 +8,6 @@ public class GameManager : MonoBehaviour
 
     private static GameManager instance;
 
-
     [SerializeField] private PlayerInput m_playerInput;
     [SerializeField] private PlayerInput m_dialogueInput;
     [SerializeField] private PlayerInput m_pauseInput; //not inplemented
@@ -21,14 +20,11 @@ public class GameManager : MonoBehaviour
 
     private state m_CurrentState;
 
-
-    // Start is called before the first frame update
     void Awake()
     {
-
         if (instance != null)
         {
-            Debug.LogWarning("Found more than one Dialogue Manger in the scene!");
+            Debug.LogError("Found more than one Game Manger in the scene!");
         }
         instance = this;
 
@@ -74,14 +70,4 @@ public class GameManager : MonoBehaviour
             m_dialogueInput.actions.FindActionMap("Player").Enable();
 
     }
-
-    //public void SwitchActionMap(state newActionMap)
-    //{
-    //    m_LastState = m_CurrentState;
-    //    m_CurrentState = newActionMap;
-
-
-    //}
-
-
 }
