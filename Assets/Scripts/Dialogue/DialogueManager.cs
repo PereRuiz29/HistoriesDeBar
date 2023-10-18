@@ -22,13 +22,18 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI m_dialogueText;
     [SerializeField] private float m_ExitDialogueTime;
 
+    [Range(0.1f, 0.01f)]
+    [SerializeField] private float m_TextVelocity;
+
     [Header("Choices UI")]
     [SerializeField] private GameObject[] m_choices;
     private TextMeshProUGUI[] m_ChoicesText;
 
+    private Coroutine m_displayTextCoroutine;
     private Story m_currentStory;
     private bool m_dialogueIsPlaying;
     private bool m_optionDisplay;
+    private bool m_textIsWriting;
 
     //accessor
     public bool dialogueIsPlaying => m_dialogueIsPlaying;
@@ -50,6 +55,7 @@ public class DialogueManager : MonoBehaviour
 
     private void Start()
     {
+        m_textIsWriting = false;
         m_dialogueIsPlaying = false;
         m_optionDisplay = false;
         m_dialoguePanel.SetActive(false);
@@ -87,15 +93,30 @@ public class DialogueManager : MonoBehaviour
         m_dialogueText.text = "";
     }
 
+    [ContextMenu("Continue")]
+    public void OnContinue(InputAction.CallbackContext context)
+    {
+        if (context.performed & !m_optionDisplay)
+            ContinueStory();
+    }
+
     private void ContinueStory()
     {
         if (m_currentStory.canContinue)
         {
-            m_dialogueText.text = m_currentStory.Continue();
+            //if (m_displayTextCoroutine != null)
+            //{
+            //    m_textIsWriting = false;
+            //    StopCoroutine(m_displayTextCoroutine);
+            //}
 
-            DisplayChoices();
+            if (!m_textIsWriting)
+                m_displayTextCoroutine = StartCoroutine(DisplayText(m_currentStory.Continue()));
+            else
+                DisplayTextImmediately();
 
-            HandleTags(m_currentStory.currentTags);
+            //HandleTags(m_currentStory.currentTags);
+
         }
         else
         {
@@ -103,11 +124,38 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
-    [ContextMenu("Continue")]
-    public void OnContinue(InputAction.CallbackContext context)
+    private IEnumerator DisplayText(string line)
     {
-        if (context.performed & !m_optionDisplay)
-            ContinueStory();
+        m_dialogueText.text = "";
+        m_textIsWriting = true;
+        HideChoices();
+
+
+        foreach (char letter in line)
+        {
+            m_dialogueText.text += letter;
+            yield return new WaitForSeconds(m_TextVelocity);
+        }
+
+        m_textIsWriting = false;
+        DisplayChoices();
+
+        m_displayTextCoroutine = null;
+    }
+
+    private void Update()
+    {
+        Debug.Log("m_textIsWriting: " + m_textIsWriting);
+        Debug.Log("m_displayTextCoroutine: " + m_displayTextCoroutine);
+    }
+
+    private void DisplayTextImmediately()
+    {
+        m_textIsWriting = false;
+        StopCoroutine(m_displayTextCoroutine);
+        m_displayTextCoroutine = null;
+
+        m_dialogueText.text = m_currentStory.currentText;
     }
 
     private void DisplayChoices()
@@ -142,6 +190,14 @@ public class DialogueManager : MonoBehaviour
 
         EventSystem.current.SetSelectedGameObject(m_choices[0]);
         StartCoroutine(EnableButtons());
+    }
+
+    private void HideChoices()
+    {
+        foreach (GameObject ChoiceButoon in m_choices)
+        {
+            ChoiceButoon.SetActive(false);
+        }
     }
 
     private IEnumerator EnableButtons()

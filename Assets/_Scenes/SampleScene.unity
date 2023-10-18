@@ -338,6 +338,7 @@ MonoBehaviour:
   m_speakerName: {fileID: 670019858}
   m_dialogueText: {fileID: 1124186683}
   m_ExitDialogueTime: 0.1
+  m_TextVelocity: 0.0418
   m_choices:
   - {fileID: 109248684}
   - {fileID: 1244524139}
