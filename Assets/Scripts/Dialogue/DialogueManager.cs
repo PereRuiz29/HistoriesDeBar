@@ -6,6 +6,7 @@ using Ink.Runtime;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using System;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -13,8 +14,11 @@ public class DialogueManager : MonoBehaviour
 
     [SerializeField] private GameObject m_gameManager;
 
+    private const string SPEAKER_TAG = "speaker";
+
     [Header("Dialogue UI")]
     [SerializeField] private GameObject m_dialoguePanel;
+    [SerializeField] private TextMeshProUGUI m_speakerName;
     [SerializeField] private TextMeshProUGUI m_dialogueText;
     [SerializeField] private float m_ExitDialogueTime;
 
@@ -90,6 +94,8 @@ public class DialogueManager : MonoBehaviour
             m_dialogueText.text = m_currentStory.Continue();
 
             DisplayChoices();
+
+            HandleTags(m_currentStory.currentTags);
         }
         else
         {
@@ -122,9 +128,9 @@ public class DialogueManager : MonoBehaviour
         int index = 0;
         foreach(Choice choice in currentChoices)
         {
-            m_choices[index].gameObject.SetActive(true);
-            m_choices[index].GetComponent<Button>().enabled = false;
+            m_choices[index].GetComponent<Button>().interactable = false;
             m_ChoicesText[index].text = choice.text;
+            m_choices[index].gameObject.SetActive(true);
             index++;
         }
 
@@ -144,8 +150,35 @@ public class DialogueManager : MonoBehaviour
 
         for (int i = 0; i < m_currentStory.currentChoices.Count; i++)
         {
-            m_choices[i].GetComponent<Button>().enabled = true;
+            m_choices[i].GetComponent<Button>().interactable = true;
         }
+    }
+
+    private void HandleTags(List<String> currentTags)
+    {
+        foreach(string tag in currentTags)
+        {
+            string[] splitTag = tag.Split(":");
+            if (splitTag.Length != 2)
+                Debug.LogError("Tag could not be appropriately parsed: " + tag);
+
+            string tagKey = splitTag[0].Trim(); 
+            string tagValue = splitTag[1].Trim();
+
+            //preparat per controlar diferents tags(layout, imatge, etc.), ara mateix nomes en necessit una
+            switch (tagKey)
+            {
+                case SPEAKER_TAG:
+                    DisplaySpeakerName(tagValue);
+                    break;
+            }
+        }
+    
+    }
+
+    void DisplaySpeakerName(string name)
+    {
+        m_speakerName.text = name;
     }
 
     public void MakeChoice(int choiceIndex)
