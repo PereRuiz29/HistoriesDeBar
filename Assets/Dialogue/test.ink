@@ -1,4 +1,4 @@
-Aixo es un prova de dialeg amb ink.
+Aixo es un prova de dialeg amb ink. #speaker:Pere
 Ha funcionat?
  + [Si]
     vaale bien
@@ -11,5 +11,7 @@ Ha funcionat?
  + [no]
     joodeer i aara que es
 
-- Que te cuides
+- Flamingo!!!  #speaker:Pere Cridant 
+- Que te cuides #speaker:Pere
+
     -> END
