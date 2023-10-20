@@ -14,7 +14,7 @@ public class Interactable : MonoBehaviour
         VisualClue.SetActive(false);
     }
 
-    //Show you can Interact with an object
+    //Show when you can Interact with an object
     public virtual void ShowVisualClue()
     {
         VisualClue.SetActive(true);
