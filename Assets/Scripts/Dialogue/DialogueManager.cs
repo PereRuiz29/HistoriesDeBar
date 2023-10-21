@@ -8,12 +8,14 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using System;
 
+//Singleton to handle the dialogues, its called by the dialogue trigger
 public class DialogueManager : MonoBehaviour
 {
     private static DialogueManager instance;
 
     [SerializeField] private GameObject m_gameManager;
 
+    //Dialogue tags
     private const string SPEAKER_TAG = "speaker";
 
     [Header("Dialogue UI")]
@@ -22,13 +24,22 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI m_dialogueText;
     [SerializeField] private float m_ExitDialogueTime;
 
+    [Range(0.1f, 0.01f)]
+    [SerializeField] private float m_TextVelocity;
+
+    [Header("Continue UI")]
+    [Tooltip("UI Image to show when you can continue to the next dialogue line, or end the dialogue.")]
+    [SerializeField] private GameObject m_continue;
+
     [Header("Choices UI")]
     [SerializeField] private GameObject[] m_choices;
     private TextMeshProUGUI[] m_ChoicesText;
 
+    private Coroutine m_displayTextCoroutine;
     private Story m_currentStory;
     private bool m_dialogueIsPlaying;
     private bool m_optionDisplay;
+    private bool m_textIsWriting;
 
     //accessor
     public bool dialogueIsPlaying => m_dialogueIsPlaying;
@@ -47,12 +58,13 @@ public class DialogueManager : MonoBehaviour
         return instance;
     }
 
-
     private void Start()
     {
+        m_textIsWriting = false;
         m_dialogueIsPlaying = false;
         m_optionDisplay = false;
         m_dialoguePanel.SetActive(false);
+        m_continue.SetActive(false);
 
         m_ChoicesText = new TextMeshProUGUI[m_choices.Length];
         int index = 0;
@@ -63,6 +75,7 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
+    //open the dialogue box and handle the input
     public void EnterDialogueMode(TextAsset inkJSON)
     {
         //change action map
@@ -75,6 +88,7 @@ public class DialogueManager : MonoBehaviour
         ContinueStory();
     }
 
+    //close the dialogue box and handle the input
     private IEnumerator ExitDialogueMode()
     {
         yield return new WaitForSeconds(m_ExitDialogueTime);
@@ -87,31 +101,83 @@ public class DialogueManager : MonoBehaviour
         m_dialogueText.text = "";
     }
 
+
+    #region Text
+
     private void ContinueStory()
     {
-        if (m_currentStory.canContinue)
-        {
-            m_dialogueText.text = m_currentStory.Continue();
+        if (m_textIsWriting)
+            DisplayTextImmediately();
 
-            DisplayChoices();
-
-            HandleTags(m_currentStory.currentTags);
-        }
         else
         {
-            StartCoroutine(ExitDialogueMode());
+            //check if can display the next dialogue line, will return false if there is no more lines OR if there are some options to choose
+            if (m_currentStory.canContinue)
+            {
+                m_displayTextCoroutine = StartCoroutine(DisplayText(m_currentStory.Continue()));
+
+                HandleTags(m_currentStory.currentTags);
+            }
+            //end of the dialogue
+            else
+                StartCoroutine(ExitDialogueMode());
         }
     }
 
-    [ContextMenu("Continue")]
-    public void OnContinue(InputAction.CallbackContext context)
+    //Display a dialogue line, letter by letter
+    private IEnumerator DisplayText(string line)
     {
-        if (context.performed & !m_optionDisplay)
-            ContinueStory();
+        m_dialogueText.text = line;
+        m_dialogueText.maxVisibleCharacters = 0;
+        m_textIsWriting = true;
+        m_continue.SetActive(false);
+        HideChoices();
+
+        bool isAddingRichTextTag = false;
+
+
+        foreach (char letter in line)
+        {
+            //loops until pass the ritch text tag without waiting
+            if (letter == '<' || isAddingRichTextTag)
+            {
+                isAddingRichTextTag = true;
+                if (letter == '>')
+                {
+                    isAddingRichTextTag = false;
+                }
+            }
+            else {
+                m_dialogueText.maxVisibleCharacters++;
+                yield return new WaitForSeconds(m_TextVelocity);
+            }
+        }
+
+        m_textIsWriting = false;
+        m_continue.SetActive(true);
+        StartCoroutine(DisplayChoices());
     }
 
-    private void DisplayChoices()
+    //cancel the DisplayText courotine and display all the line Instantanally
+    private void DisplayTextImmediately()
     {
+        m_textIsWriting = false;
+        m_continue.SetActive(true);
+        StopCoroutine(m_displayTextCoroutine);
+
+        m_dialogueText.maxVisibleCharacters = m_currentStory.currentText.Length;
+        StartCoroutine(DisplayChoices());
+    }
+
+#endregion
+
+    #region Choices
+
+    //display of hide the button choices when need it
+    private IEnumerator DisplayChoices()
+    {
+        yield return new WaitForSeconds(m_ExitDialogueTime);
+
         List<Choice> currentChoices = m_currentStory.currentChoices;
 
         if (currentChoices.Count == 0)
@@ -144,6 +210,16 @@ public class DialogueManager : MonoBehaviour
         StartCoroutine(EnableButtons());
     }
 
+    //hide all choices
+    private void HideChoices()
+    {
+        foreach (GameObject ChoiceButoon in m_choices)
+        {
+            ChoiceButoon.SetActive(false);
+        }
+    }
+
+    //enable all displaced buttons with a little delay time to avoid problems with the input
     private IEnumerator EnableButtons()
     {
         yield return new WaitForSeconds(m_ExitDialogueTime);
@@ -154,6 +230,11 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
+    #endregion
+
+    #region Tags
+
+    //Handle ink diolegue tags
     private void HandleTags(List<String> currentTags)
     {
         foreach(string tag in currentTags)
@@ -165,7 +246,7 @@ public class DialogueManager : MonoBehaviour
             string tagKey = splitTag[0].Trim(); 
             string tagValue = splitTag[1].Trim();
 
-            //preparat per controlar diferents tags(layout, imatge, etc.), ara mateix nomes en necessit una
+            //ready to handle differents tags(i just need one for now)
             switch (tagKey)
             {
                 case SPEAKER_TAG:
@@ -173,17 +254,30 @@ public class DialogueManager : MonoBehaviour
                     break;
             }
         }
-    
     }
 
+    //Display the name of the speaker on the top of the dialogue box
     void DisplaySpeakerName(string name)
     {
         m_speakerName.text = name;
     }
 
+    #endregion
+
+    #region Inputs
+    public void OnContinue(InputAction.CallbackContext context)
+    {
+        if (context.performed & !m_optionDisplay)
+            ContinueStory();
+    }
+
+    //reads the options buttons inputs
     public void MakeChoice(int choiceIndex)
     {
         m_currentStory.ChooseChoiceIndex(choiceIndex);
+        m_optionDisplay = false;
         ContinueStory();
     }
+
+    #endregion
 }
