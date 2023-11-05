@@ -35,6 +35,10 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private GameObject[] m_choices;
     private TextMeshProUGUI[] m_ChoicesText;
 
+    //Audio
+    private DialogueAudio m_DialogueAudio; 
+
+
     private Coroutine m_displayTextCoroutine;
     private Story m_currentStory;
     private bool m_dialogueIsPlaying;
@@ -51,6 +55,8 @@ public class DialogueManager : MonoBehaviour
             Debug.LogError("Found more than one Dialogue Manger in the scene!");
         }
         instance = this;
+
+        m_DialogueAudio = GetComponent<DialogueAudio>();
     }
 
     public static DialogueManager GetInstance()
@@ -68,7 +74,7 @@ public class DialogueManager : MonoBehaviour
 
         m_ChoicesText = new TextMeshProUGUI[m_choices.Length];
         int index = 0;
-        foreach(GameObject choice in m_choices)
+        foreach (GameObject choice in m_choices)
         {
             m_ChoicesText[index] = choice.GetComponentInChildren<TextMeshProUGUI>();
             index++;
@@ -147,7 +153,9 @@ public class DialogueManager : MonoBehaviour
                     isAddingRichTextTag = false;
                 }
             }
-            else {
+            else
+            {
+                m_DialogueAudio.PlayDialogueSound(m_dialogueText.maxVisibleCharacters, m_dialogueText.text[m_dialogueText.maxVisibleCharacters]);
                 m_dialogueText.maxVisibleCharacters++;
                 yield return new WaitForSeconds(m_TextVelocity);
             }
@@ -169,7 +177,8 @@ public class DialogueManager : MonoBehaviour
         StartCoroutine(DisplayChoices());
     }
 
-#endregion
+    #endregion
+
 
     #region Choices
 
@@ -192,7 +201,7 @@ public class DialogueManager : MonoBehaviour
         }
 
         int index = 0;
-        foreach(Choice choice in currentChoices)
+        foreach (Choice choice in currentChoices)
         {
             m_choices[index].GetComponent<Button>().interactable = false;
             m_ChoicesText[index].text = choice.text;
@@ -237,13 +246,13 @@ public class DialogueManager : MonoBehaviour
     //Handle ink diolegue tags
     private void HandleTags(List<String> currentTags)
     {
-        foreach(string tag in currentTags)
+        foreach (string tag in currentTags)
         {
             string[] splitTag = tag.Split(":");
             if (splitTag.Length != 2)
                 Debug.LogError("Tag could not be appropriately parsed: " + tag);
 
-            string tagKey = splitTag[0].Trim(); 
+            string tagKey = splitTag[0].Trim();
             string tagValue = splitTag[1].Trim();
 
             //ready to handle differents tags(i just need one for now)

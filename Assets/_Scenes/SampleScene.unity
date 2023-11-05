@@ -314,6 +314,7 @@ GameObject:
   - component: {fileID: 255462784}
   - component: {fileID: 255462783}
   - component: {fileID: 255462785}
+  - component: {fileID: 255462786}
   m_Layer: 0
   m_Name: Dialogue Manager
   m_TagString: Untagged
@@ -416,6 +417,20 @@ MonoBehaviour:
   m_DefaultActionMap: Dialogue
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &255462786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 255462782}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45cca5b6917a5154e8c0d5f7d2f8c11d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_MakePredictable: 1
+  m_DefaultAudioInfo: {fileID: 11400000, guid: 4b0507db87656ae41a46e86d71d0ca23, type: 2}
 --- !u!1 &279664195
 GameObject:
   m_ObjectHideFlags: 0
