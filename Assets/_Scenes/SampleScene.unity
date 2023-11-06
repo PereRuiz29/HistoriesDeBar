@@ -431,6 +431,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_MakePredictable: 1
   m_DefaultAudioInfo: {fileID: 11400000, guid: 4b0507db87656ae41a46e86d71d0ca23, type: 2}
+  m_AudioInfos:
+  - {fileID: 11400000, guid: ea4f7bb14bfdee340890b592469a01f8, type: 2}
+  - {fileID: 11400000, guid: 1ae0290399977244e85df6333abb351e, type: 2}
 --- !u!1 &279664195
 GameObject:
   m_ObjectHideFlags: 0
@@ -1218,8 +1221,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1760,7 +1763,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 0
+  m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
@@ -2144,7 +2147,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   VisualClue: {fileID: 1889623865}
-  m_inkJSON: {fileID: 4900000, guid: 8098078614f916144bfe0e0970c01b62, type: 3}
+  m_inkJSON: {fileID: 4900000, guid: 77577463d253ca345b798add905de3ef, type: 3}
 --- !u!136 &1622657657
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2425,8 +2428,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:

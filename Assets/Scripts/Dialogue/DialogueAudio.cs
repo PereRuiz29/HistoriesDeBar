@@ -12,7 +12,10 @@ public class DialogueAudio : MonoBehaviour
 
     [Header("ScriptableObject")]
     [SerializeField] private DialogueAudioInfoSO m_DefaultAudioInfo;
-    private DialogueAudioInfoSO m_CurrentAudioInfo;
+
+    [SerializeField] private DialogueAudioInfoSO[] m_AudioInfos;
+    private Dictionary<string, DialogueAudioInfoSO> m_AudioInfoDiccionary;
+
 
     //Audio configuration
     private AudioClip[] m_dialogueTypingAudioClips;
@@ -25,32 +28,52 @@ public class DialogueAudio : MonoBehaviour
     {
         m_typingAudioSource = this.gameObject.AddComponent<AudioSource>();
 
-        m_CurrentAudioInfo = m_DefaultAudioInfo;
-
         //debug
     }
 
     private void Start()
     {
-        SetAudioInfo("patata");
+        InitializeAudioInfoDiccionary();
+    }
 
+    private void InitializeAudioInfoDiccionary()
+    {
+        m_AudioInfoDiccionary = new Dictionary<string, DialogueAudioInfoSO>();
+        m_AudioInfoDiccionary.Add(m_DefaultAudioInfo.id, m_DefaultAudioInfo);
+
+        foreach (DialogueAudioInfoSO audioInfo in m_AudioInfos)
+            m_AudioInfoDiccionary.Add(audioInfo.id, audioInfo);
     }
 
     //Set all the audio configurations to the chosen charater audio info
     public void SetAudioInfo(string id)
     {
-        m_dialogueTypingAudioClips = m_CurrentAudioInfo.dialogueTypingAudioClips;
-        m_FrequencyLevel = m_CurrentAudioInfo.frequencyLevel;
-        m_MaxPitch = m_CurrentAudioInfo.maxPitch;
-        m_MinPitch = m_CurrentAudioInfo.minPitch;
-        m_stopAudio = m_CurrentAudioInfo.stopAudio;
+        Debug.Log("id: " + id);
+
+        DialogueAudioInfoSO currentAudioInfo = null;
+        m_AudioInfoDiccionary.TryGetValue(id, out currentAudioInfo);
+        if (currentAudioInfo != null)
+        {
+            m_dialogueTypingAudioClips = currentAudioInfo.dialogueTypingAudioClips;
+            m_FrequencyLevel = currentAudioInfo.frequencyLevel;
+            m_MaxPitch = currentAudioInfo.maxPitch;
+            m_MinPitch = currentAudioInfo.minPitch;
+            m_stopAudio = currentAudioInfo.stopAudio;
+
+        }
+        else
+        {
+            Debug.LogError("The audio info not found with the id: " + id);
+            m_dialogueTypingAudioClips = m_DefaultAudioInfo.dialogueTypingAudioClips;
+            m_FrequencyLevel = m_DefaultAudioInfo.frequencyLevel;
+            m_MaxPitch = m_DefaultAudioInfo.maxPitch;
+            m_MinPitch = m_DefaultAudioInfo.minPitch;
+            m_stopAudio = m_DefaultAudioInfo.stopAudio;
+        }
     }
 
     public void PlayDialogueSound(int characterDisplayCounter, char currentCharacter)
     {
-        Debug.Log("characterDisplayCounter: " + characterDisplayCounter);
-        Debug.Log("currentCharacter: " + currentCharacter);
-
         if (characterDisplayCounter % m_FrequencyLevel == 0)
         {
             if (m_stopAudio)

@@ -17,6 +17,7 @@ public class DialogueManager : MonoBehaviour
 
     //Dialogue tags
     private const string SPEAKER_TAG = "speaker";
+    private const string AUDIO_TAG = "audio";
 
     [Header("Dialogue UI")]
     [SerializeField] private GameObject m_dialoguePanel;
@@ -120,9 +121,9 @@ public class DialogueManager : MonoBehaviour
             //check if can display the next dialogue line, will return false if there is no more lines OR if there are some options to choose
             if (m_currentStory.canContinue)
             {
-                m_displayTextCoroutine = StartCoroutine(DisplayText(m_currentStory.Continue()));
-
+                string nextLine = m_currentStory.Continue();
                 HandleTags(m_currentStory.currentTags);
+                m_displayTextCoroutine = StartCoroutine(DisplayText(nextLine));
             }
             //end of the dialogue
             else
@@ -261,6 +262,12 @@ public class DialogueManager : MonoBehaviour
                 case SPEAKER_TAG:
                     DisplaySpeakerName(tagValue);
                     break;
+                case AUDIO_TAG:
+                    m_DialogueAudio.SetAudioInfo(tagValue);
+                    break;
+                default:
+                    Debug.LogError("Unexpecter tag: " + tagKey);
+                    break;
             }
         }
     }
@@ -270,6 +277,8 @@ public class DialogueManager : MonoBehaviour
     {
         m_speakerName.text = name;
     }
+
+
 
     #endregion
 
