@@ -13,8 +13,6 @@ public class DialogueManager : MonoBehaviour
 {
     private static DialogueManager instance;
 
-    [SerializeField] private GameObject m_gameManager;
-
     //Dialogue tags
     private const string SPEAKER_TAG = "speaker";
     private const string AUDIO_TAG = "audio";
@@ -30,18 +28,20 @@ public class DialogueManager : MonoBehaviour
 
     [Header("Continue UI")]
     [Tooltip("UI Image to show when you can continue to the next dialogue line, or end the dialogue.")]
-    [SerializeField] private GameObject m_continue;
+    [SerializeField] private GameObject m_continueIcon;
 
     [Header("Choices UI")]
-    [SerializeField] private GameObject[] m_choices;
-    private TextMeshProUGUI[] m_ChoicesText;
+    [SerializeField] private GameObject m_choiceButtonPrefab;
+    [SerializeField] private GameObject m_buttonContainer;
+    private List<GameObject> m_choices;
+
 
     //Audio
     private DialogueAudio m_DialogueAudio; 
 
-
     private Coroutine m_displayTextCoroutine;
     private Story m_currentStory;
+
     private bool m_dialogueIsPlaying;
     private bool m_optionDisplay;
     private bool m_textIsWriting;
@@ -71,15 +71,8 @@ public class DialogueManager : MonoBehaviour
         m_dialogueIsPlaying = false;
         m_optionDisplay = false;
         m_dialoguePanel.SetActive(false);
-        m_continue.SetActive(false);
-
-        m_ChoicesText = new TextMeshProUGUI[m_choices.Length];
-        int index = 0;
-        foreach (GameObject choice in m_choices)
-        {
-            m_ChoicesText[index] = choice.GetComponentInChildren<TextMeshProUGUI>();
-            index++;
-        }
+        m_continueIcon.SetActive(false);
+        m_choices = new List<GameObject>();
     }
 
     //open the dialogue box and handle the input
@@ -137,8 +130,7 @@ public class DialogueManager : MonoBehaviour
         m_dialogueText.text = line;
         m_dialogueText.maxVisibleCharacters = 0;
         m_textIsWriting = true;
-        m_continue.SetActive(false);
-        HideChoices();
+        m_continueIcon.SetActive(false);
 
         bool isAddingRichTextTag = false;
 
@@ -163,7 +155,7 @@ public class DialogueManager : MonoBehaviour
         }
 
         m_textIsWriting = false;
-        m_continue.SetActive(true);
+        m_continueIcon.SetActive(true);
         StartCoroutine(DisplayChoices());
     }
 
@@ -171,7 +163,7 @@ public class DialogueManager : MonoBehaviour
     private void DisplayTextImmediately()
     {
         m_textIsWriting = false;
-        m_continue.SetActive(true);
+        m_continueIcon.SetActive(true);
         StopCoroutine(m_displayTextCoroutine);
 
         m_dialogueText.maxVisibleCharacters = m_currentStory.currentText.Length;
@@ -183,50 +175,48 @@ public class DialogueManager : MonoBehaviour
 
     #region Choices
 
-    //display of hide the button choices when need it
+    //display the button choices when need it
     private IEnumerator DisplayChoices()
     {
         yield return new WaitForSeconds(m_ExitDialogueTime);
 
         List<Choice> currentChoices = m_currentStory.currentChoices;
 
-        if (currentChoices.Count == 0)
+        if (currentChoices.Count == 0) {
             m_optionDisplay = false;
-        else
-            m_optionDisplay = true;
-
-        //en ficarho en menu modal arreglara aixo
-        if (currentChoices.Count > m_ChoicesText.Length)
-        {
-            Debug.Log("La UI es cutrilla i ara mateix no da pa mes de dues opcions. Nombre de opcions que demana: " + currentChoices.Count);
+            yield break;
         }
+        m_optionDisplay = true;
 
         int index = 0;
         foreach (Choice choice in currentChoices)
         {
-            m_choices[index].GetComponent<Button>().interactable = false;
-            m_ChoicesText[index].text = choice.text;
-            m_choices[index].gameObject.SetActive(true);
+            GameObject button = Instantiate(m_choiceButtonPrefab, m_buttonContainer.transform);
+            button.GetComponentInChildren<TextMeshProUGUI>().text = currentChoices[index].text;
+            button.GetComponent<Button>().interactable = false;
+            button.gameObject.SetActive(true);
+
+            //Assign each button the make choice action
+            int i = index; //Save the index value in a different variable to avoid changing it in the next loop
+            button.GetComponent<Button>().onClick.AddListener(() => MakeChoice(i));
+
+            m_choices.Add(button);
+
             index++;
         }
 
-        //amagar opcions no utilitzades
-        for (int i = index; i < m_ChoicesText.Length; i++)
-        {
-            m_choices[i].gameObject.SetActive(false);
-        }
-
+        //select the first button
         EventSystem.current.SetSelectedGameObject(m_choices[0]);
         StartCoroutine(EnableButtons());
     }
 
-    //hide all choices
-    private void HideChoices()
+    //remove all choices
+    private void RemoveChoices()
     {
-        foreach (GameObject ChoiceButoon in m_choices)
-        {
-            ChoiceButoon.SetActive(false);
-        }
+        foreach (GameObject button in m_choices)
+            Destroy(button);
+
+        m_choices.Clear();
     }
 
     //enable all displaced buttons with a little delay time to avoid problems with the input
@@ -294,6 +284,9 @@ public class DialogueManager : MonoBehaviour
     {
         m_currentStory.ChooseChoiceIndex(choiceIndex);
         m_optionDisplay = false;
+
+        //remove current choices and display the next line
+        RemoveChoices();
         ContinueStory();
     }
 
