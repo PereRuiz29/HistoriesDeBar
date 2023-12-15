@@ -5,12 +5,9 @@
     Perfecte
  + [No]
     Pues mira que és fàcil d'entendre...
- + [3]
-    Pues maaendre...
- + [4]
-    Pues mira que és fàcil d'efgfghfghntendre...
- + [5]
-    Pues mirasdastendre...
+ + [Aixo es una resposta mes llarga]
+    A bueno, mira tu que be
+
     
 -Tambe pots mostrar diferentes persones #speaker:NPC2 #audio: NPC2
 -Amb cada persona té uns efectes d'audio diferents
