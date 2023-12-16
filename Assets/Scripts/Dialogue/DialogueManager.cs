@@ -16,6 +16,14 @@ public class DialogueManager : MonoBehaviour
     //Dialogue tags
     private const string SPEAKER_TAG = "speaker";
     private const string AUDIO_TAG = "audio";
+    private const string RESIZE_TAG = "resize";
+
+    [Tooltip("The panel box resize based on the text size")]
+    [SerializeField] private bool m_resizePanel;
+    [SerializeField] private int m_preferredWidth;
+    [SerializeField] private int m_preferredHeight;
+    [SerializeField] private LayoutElement m_layoutElement;
+
 
     [Header("Dialogue UI")]
     [SerializeField] private GameObject m_dialoguePanel;
@@ -128,6 +136,7 @@ public class DialogueManager : MonoBehaviour
     private IEnumerator DisplayText(string line)
     {
         m_dialogueText.text = line;
+        ResizePanel();
         m_dialogueText.maxVisibleCharacters = 0;
         m_textIsWriting = true;
         m_continueIcon.SetActive(false);
@@ -157,6 +166,26 @@ public class DialogueManager : MonoBehaviour
         m_textIsWriting = false;
         m_continueIcon.SetActive(true);
         StartCoroutine(DisplayChoices());
+    }
+
+    //The panel box resize based on the text size
+    private void ResizePanel()
+    {
+        if (m_resizePanel)
+        {
+            m_layoutElement.preferredHeight = -1;
+            if (m_dialogueText.preferredWidth > m_preferredWidth)
+            {
+                m_layoutElement.preferredWidth = m_preferredWidth;
+            }
+            else
+                m_layoutElement.preferredWidth = -1;
+
+        }
+        else {
+            m_layoutElement.preferredHeight = m_preferredHeight;
+            m_layoutElement.preferredWidth = m_preferredWidth;
+        }
     }
 
     //cancel the DisplayText courotine and display all the line Instantanally
@@ -271,6 +300,9 @@ public class DialogueManager : MonoBehaviour
                 case AUDIO_TAG:
                     m_DialogueAudio.SetAudioInfo(tagValue);
                     break;
+                case RESIZE_TAG:
+                    ResizeBox(tagValue);
+                    break;
                 default:
                     Debug.LogError("Unexpecter tag: " + tagKey);
                     break;
@@ -282,6 +314,18 @@ public class DialogueManager : MonoBehaviour
     void DisplaySpeakerName(string name)
     {
         m_speakerName.text = name;
+    }
+
+    //enable or dissable the box resizing based on the text size
+    void ResizeBox(string toogle)
+    {
+        if (toogle == "enabled")
+            m_resizePanel = true;
+        else if (toogle == "disabled")
+            m_resizePanel = false;
+        else
+            Debug.LogError("Error on Resize tag: " + toogle + " option not expected");
+
     }
 
 

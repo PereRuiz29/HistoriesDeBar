@@ -10,8 +10,6 @@ public class ChoiceButton : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI m_contentField;
     [SerializeField] private LayoutElement m_layoutElement;
-    [SerializeField] private GameObject m_SelectIcon;
-    [SerializeField] private Button m_button;
 
     void Start()
     {
