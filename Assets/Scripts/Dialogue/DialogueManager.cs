@@ -192,9 +192,11 @@ public class DialogueManager : MonoBehaviour
         foreach (Choice choice in currentChoices)
         {
             GameObject button = Instantiate(m_choiceButtonPrefab, m_buttonContainer.transform);
+            button.gameObject.SetActive(false);
             button.GetComponentInChildren<TextMeshProUGUI>().text = currentChoices[index].text;
             button.GetComponent<Button>().interactable = false;
-            button.gameObject.SetActive(true);
+            //the button resize base on the text on awake
+            button.gameObject.SetActive(true); 
 
             //Assign each button the make choice action
             int i = index; //Save the index value in a different variable to avoid changing it in the next loop
@@ -205,8 +207,22 @@ public class DialogueManager : MonoBehaviour
             index++;
         }
 
+        //set circular button navigation
+        int nButtons = m_choices.Count;
+        for (int i = 0; i < nButtons; i++)
+        {
+            var navigation = m_choices[i].GetComponent<Button>().navigation;
+            navigation.mode = Navigation.Mode.Explicit;
+
+            navigation.selectOnDown = m_choices[(i + 1) % nButtons].GetComponent<Button>();
+            navigation.selectOnUp = m_choices[(i + nButtons - 1) % nButtons].GetComponent<Button>();
+
+            m_choices[i].GetComponent<Button>().navigation = navigation;
+        }
+
         //select the first button
         EventSystem.current.SetSelectedGameObject(m_choices[0]);
+
         StartCoroutine(EnableButtons());
     }
 
