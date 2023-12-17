@@ -48,8 +48,6 @@ public class DialogueAudio : MonoBehaviour
     //Set all the audio configurations to the chosen charater audio info
     public void SetAudioInfo(string id)
     {
-        Debug.Log("id: " + id);
-
         DialogueAudioInfoSO currentAudioInfo = null;
         m_AudioInfoDiccionary.TryGetValue(id, out currentAudioInfo);
         if (currentAudioInfo != null)

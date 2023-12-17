@@ -13,11 +13,17 @@ public class DialogueManager : MonoBehaviour
 {
     private static DialogueManager instance;
 
-    [SerializeField] private GameObject m_gameManager;
-
     //Dialogue tags
     private const string SPEAKER_TAG = "speaker";
     private const string AUDIO_TAG = "audio";
+    private const string RESIZE_TAG = "resize";
+
+    [Tooltip("The panel box resize based on the text size")]
+    [SerializeField] private bool m_resizePanel;
+    [SerializeField] private int m_preferredWidth;
+    [SerializeField] private int m_preferredHeight;
+    [SerializeField] private LayoutElement m_layoutElement;
+
 
     [Header("Dialogue UI")]
     [SerializeField] private GameObject m_dialoguePanel;
@@ -30,18 +36,20 @@ public class DialogueManager : MonoBehaviour
 
     [Header("Continue UI")]
     [Tooltip("UI Image to show when you can continue to the next dialogue line, or end the dialogue.")]
-    [SerializeField] private GameObject m_continue;
+    [SerializeField] private GameObject m_continueIcon;
 
     [Header("Choices UI")]
-    [SerializeField] private GameObject[] m_choices;
-    private TextMeshProUGUI[] m_ChoicesText;
+    [SerializeField] private GameObject m_choiceButtonPrefab;
+    [SerializeField] private GameObject m_buttonContainer;
+    private List<GameObject> m_choices;
+
 
     //Audio
     private DialogueAudio m_DialogueAudio; 
 
-
     private Coroutine m_displayTextCoroutine;
     private Story m_currentStory;
+
     private bool m_dialogueIsPlaying;
     private bool m_optionDisplay;
     private bool m_textIsWriting;
@@ -71,15 +79,8 @@ public class DialogueManager : MonoBehaviour
         m_dialogueIsPlaying = false;
         m_optionDisplay = false;
         m_dialoguePanel.SetActive(false);
-        m_continue.SetActive(false);
-
-        m_ChoicesText = new TextMeshProUGUI[m_choices.Length];
-        int index = 0;
-        foreach (GameObject choice in m_choices)
-        {
-            m_ChoicesText[index] = choice.GetComponentInChildren<TextMeshProUGUI>();
-            index++;
-        }
+        m_continueIcon.SetActive(false);
+        m_choices = new List<GameObject>();
     }
 
     //open the dialogue box and handle the input
@@ -135,10 +136,10 @@ public class DialogueManager : MonoBehaviour
     private IEnumerator DisplayText(string line)
     {
         m_dialogueText.text = line;
+        ResizePanel();
         m_dialogueText.maxVisibleCharacters = 0;
         m_textIsWriting = true;
-        m_continue.SetActive(false);
-        HideChoices();
+        m_continueIcon.SetActive(false);
 
         bool isAddingRichTextTag = false;
 
@@ -163,15 +164,35 @@ public class DialogueManager : MonoBehaviour
         }
 
         m_textIsWriting = false;
-        m_continue.SetActive(true);
+        m_continueIcon.SetActive(true);
         StartCoroutine(DisplayChoices());
+    }
+
+    //The panel box resize based on the text size
+    private void ResizePanel()
+    {
+        if (m_resizePanel)
+        {
+            m_layoutElement.preferredHeight = -1;
+            if (m_dialogueText.preferredWidth > m_preferredWidth)
+            {
+                m_layoutElement.preferredWidth = m_preferredWidth;
+            }
+            else
+                m_layoutElement.preferredWidth = -1;
+
+        }
+        else {
+            m_layoutElement.preferredHeight = m_preferredHeight;
+            m_layoutElement.preferredWidth = m_preferredWidth;
+        }
     }
 
     //cancel the DisplayText courotine and display all the line Instantanally
     private void DisplayTextImmediately()
     {
         m_textIsWriting = false;
-        m_continue.SetActive(true);
+        m_continueIcon.SetActive(true);
         StopCoroutine(m_displayTextCoroutine);
 
         m_dialogueText.maxVisibleCharacters = m_currentStory.currentText.Length;
@@ -183,50 +204,66 @@ public class DialogueManager : MonoBehaviour
 
     #region Choices
 
-    //display of hide the button choices when need it
+    //display the button choices when need it
     private IEnumerator DisplayChoices()
     {
-        yield return new WaitForSeconds(m_ExitDialogueTime);
-
         List<Choice> currentChoices = m_currentStory.currentChoices;
 
-        if (currentChoices.Count == 0)
+        if (currentChoices.Count == 0) {
             m_optionDisplay = false;
-        else
-            m_optionDisplay = true;
-
-        //en ficarho en menu modal arreglara aixo
-        if (currentChoices.Count > m_ChoicesText.Length)
-        {
-            Debug.Log("La UI es cutrilla i ara mateix no da pa mes de dues opcions. Nombre de opcions que demana: " + currentChoices.Count);
+            yield break;
         }
+        m_continueIcon.SetActive(false);
+        m_optionDisplay = true;
+
+        //to avoid problems with the input
+        yield return new WaitForSeconds(m_ExitDialogueTime);
 
         int index = 0;
         foreach (Choice choice in currentChoices)
         {
-            m_choices[index].GetComponent<Button>().interactable = false;
-            m_ChoicesText[index].text = choice.text;
-            m_choices[index].gameObject.SetActive(true);
+            GameObject button = Instantiate(m_choiceButtonPrefab, m_buttonContainer.transform);
+            button.gameObject.SetActive(false);
+            button.GetComponentInChildren<TextMeshProUGUI>().text = currentChoices[index].text;
+            button.GetComponent<Button>().interactable = false;
+            //the button resize base on the text on awake
+            button.gameObject.SetActive(true); 
+
+            //Assign each button the make choice action
+            int i = index; //Save the index value in a different variable to avoid changing it in the next loop
+            button.GetComponent<Button>().onClick.AddListener(() => MakeChoice(i));
+
+            m_choices.Add(button);
+
             index++;
         }
 
-        //amagar opcions no utilitzades
-        for (int i = index; i < m_ChoicesText.Length; i++)
+        //set circular button navigation
+        int nButtons = m_choices.Count;
+        for (int i = 0; i < nButtons; i++)
         {
-            m_choices[i].gameObject.SetActive(false);
+            var navigation = m_choices[i].GetComponent<Button>().navigation;
+            navigation.mode = Navigation.Mode.Explicit;
+
+            navigation.selectOnDown = m_choices[(i + 1) % nButtons].GetComponent<Button>();
+            navigation.selectOnUp = m_choices[(i + nButtons - 1) % nButtons].GetComponent<Button>();
+
+            m_choices[i].GetComponent<Button>().navigation = navigation;
         }
 
+        //select the first button
         EventSystem.current.SetSelectedGameObject(m_choices[0]);
+
         StartCoroutine(EnableButtons());
     }
 
-    //hide all choices
-    private void HideChoices()
+    //remove all choices
+    private void RemoveChoices()
     {
-        foreach (GameObject ChoiceButoon in m_choices)
-        {
-            ChoiceButoon.SetActive(false);
-        }
+        foreach (GameObject button in m_choices)
+            Destroy(button);
+
+        m_choices.Clear();
     }
 
     //enable all displaced buttons with a little delay time to avoid problems with the input
@@ -265,6 +302,9 @@ public class DialogueManager : MonoBehaviour
                 case AUDIO_TAG:
                     m_DialogueAudio.SetAudioInfo(tagValue);
                     break;
+                case RESIZE_TAG:
+                    ResizeBox(tagValue);
+                    break;
                 default:
                     Debug.LogError("Unexpecter tag: " + tagKey);
                     break;
@@ -276,6 +316,18 @@ public class DialogueManager : MonoBehaviour
     void DisplaySpeakerName(string name)
     {
         m_speakerName.text = name;
+    }
+
+    //enable or dissable the box resizing based on the text size
+    void ResizeBox(string toogle)
+    {
+        if (toogle == "enabled")
+            m_resizePanel = true;
+        else if (toogle == "disabled")
+            m_resizePanel = false;
+        else
+            Debug.LogError("Error on Resize tag: " + toogle + " option not expected");
+
     }
 
 
@@ -294,6 +346,9 @@ public class DialogueManager : MonoBehaviour
     {
         m_currentStory.ChooseChoiceIndex(choiceIndex);
         m_optionDisplay = false;
+
+        //remove current choices and display the next line
+        RemoveChoices();
         ContinueStory();
     }
 
