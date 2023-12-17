@@ -207,15 +207,17 @@ public class DialogueManager : MonoBehaviour
     //display the button choices when need it
     private IEnumerator DisplayChoices()
     {
-        yield return new WaitForSeconds(m_ExitDialogueTime);
-
         List<Choice> currentChoices = m_currentStory.currentChoices;
 
         if (currentChoices.Count == 0) {
             m_optionDisplay = false;
             yield break;
         }
+        m_continueIcon.SetActive(false);
         m_optionDisplay = true;
+
+        //to avoid problems with the input
+        yield return new WaitForSeconds(m_ExitDialogueTime);
 
         int index = 0;
         foreach (Choice choice in currentChoices)

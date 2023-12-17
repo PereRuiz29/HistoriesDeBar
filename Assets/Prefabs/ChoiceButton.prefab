@@ -315,8 +315,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_contentField: {fileID: 4965454213554806730}
   m_layoutElement: {fileID: 8767606944988750241}
-  m_SelectIcon: {fileID: 0}
-  m_button: {fileID: 0}
+  m_selectIcon: {fileID: 6366787304785709402}
 --- !u!114 &8767606944988750241
 MonoBehaviour:
   m_ObjectHideFlags: 0
