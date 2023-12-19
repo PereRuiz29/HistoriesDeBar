@@ -27,16 +27,11 @@ public class DialogueManager : MonoBehaviour
 
     [Header("Dialogue UI")]
     [SerializeField] private GameObject m_dialoguePanel;
-    [SerializeField] private TextMeshProUGUI m_speakerName;
     [SerializeField] private TextMeshProUGUI m_dialogueText;
     [SerializeField] private float m_ExitDialogueTime;
 
     [Range(0.1f, 0.01f)]
     [SerializeField] private float m_TextVelocity;
-
-    [Header("Continue UI")]
-    [Tooltip("UI Image to show when you can continue to the next dialogue line, or end the dialogue.")]
-    [SerializeField] private GameObject m_continueIcon;
 
     [Header("Choices UI")]
     [SerializeField] private GameObject m_choiceButtonPrefab;
@@ -45,14 +40,22 @@ public class DialogueManager : MonoBehaviour
 
 
     //Audio
-    private DialogueAudio m_DialogueAudio; 
+    private DialogueAudio m_DialogueAudio;
+    //Animations
+    private DialogueTween m_tween;
+
 
     private Coroutine m_displayTextCoroutine;
     private Story m_currentStory;
 
+
+
+    private bool m_canEnterDialogue;
     private bool m_dialogueIsPlaying;
     private bool m_optionDisplay;
     private bool m_textIsWriting;
+
+
 
     //accessor
     public bool dialogueIsPlaying => m_dialogueIsPlaying;
@@ -66,6 +69,7 @@ public class DialogueManager : MonoBehaviour
         instance = this;
 
         m_DialogueAudio = GetComponent<DialogueAudio>();
+        m_dialoguePanel.GetComponent<CanvasGroup>().alpha = 0;
     }
 
     public static DialogueManager GetInstance()
@@ -75,38 +79,47 @@ public class DialogueManager : MonoBehaviour
 
     private void Start()
     {
+        m_canEnterDialogue = true;
         m_textIsWriting = false;
         m_dialogueIsPlaying = false;
         m_optionDisplay = false;
-        m_dialoguePanel.SetActive(false);
-        m_continueIcon.SetActive(false);
         m_choices = new List<GameObject>();
+        m_tween = GetComponent<DialogueTween>();
     }
 
     //open the dialogue box and handle the input
     public void EnterDialogueMode(TextAsset inkJSON)
     {
+        //to evoid problems if spam inputs
+        if (!m_canEnterDialogue)
+            return;
+
         //change action map
         GameManager.GetInstance().EnterDialogue();
 
         m_currentStory = new Story(inkJSON.text);
         m_dialogueIsPlaying = true;
-        m_dialoguePanel.SetActive(true);
 
+        m_tween.openDialogue();
         ContinueStory();
     }
 
     //close the dialogue box and handle the input
     private IEnumerator ExitDialogueMode()
     {
+        m_canEnterDialogue = false;
         yield return new WaitForSeconds(m_ExitDialogueTime);
 
         //change action map
         GameManager.GetInstance().ExitDialogue();
 
+        //exit animation
+        m_tween.closeDialogue();
+
+        yield return new WaitForSeconds(1);
         m_dialogueIsPlaying = false;
-        m_dialoguePanel.SetActive(false);
         m_dialogueText.text = "";
+        m_canEnterDialogue = true;
     }
 
 
@@ -139,7 +152,7 @@ public class DialogueManager : MonoBehaviour
         ResizePanel();
         m_dialogueText.maxVisibleCharacters = 0;
         m_textIsWriting = true;
-        m_continueIcon.SetActive(false);
+        m_tween.hideContinueIcon();
 
         bool isAddingRichTextTag = false;
 
@@ -164,7 +177,7 @@ public class DialogueManager : MonoBehaviour
         }
 
         m_textIsWriting = false;
-        m_continueIcon.SetActive(true);
+        m_tween.ShowContinueIcon();
         StartCoroutine(DisplayChoices());
     }
 
@@ -192,7 +205,7 @@ public class DialogueManager : MonoBehaviour
     private void DisplayTextImmediately()
     {
         m_textIsWriting = false;
-        m_continueIcon.SetActive(true);
+        m_tween.ShowContinueIcon();
         StopCoroutine(m_displayTextCoroutine);
 
         m_dialogueText.maxVisibleCharacters = m_currentStory.currentText.Length;
@@ -213,7 +226,7 @@ public class DialogueManager : MonoBehaviour
             m_optionDisplay = false;
             yield break;
         }
-        m_continueIcon.SetActive(false);
+        m_tween.hideContinueIcon();
         m_optionDisplay = true;
 
         //to avoid problems with the input
@@ -315,7 +328,12 @@ public class DialogueManager : MonoBehaviour
     //Display the name of the speaker on the top of the dialogue box
     void DisplaySpeakerName(string name)
     {
-        m_speakerName.text = name;
+        if (name == "show")
+            m_tween.ShowSpeakerName();
+        else if (name == "hide")
+            m_tween.HideSpeakerName();
+        else
+            m_tween.ChangeSpeakerName(name);
     }
 
     //enable or dissable the box resizing based on the text size
