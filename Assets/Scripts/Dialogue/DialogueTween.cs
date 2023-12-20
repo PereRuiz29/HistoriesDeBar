@@ -16,9 +16,13 @@ public class DialogueTween : MonoBehaviour
     [SerializeField] private Transform m_continueIcon;
     private Tween m_continueAnimation;
 
+    [Header("Choices")]
+    private List<Tween> m_arrows;
+
     private void Start()
     {
         m_continueIcon.gameObject.SetActive(false);
+        m_arrows = new List<Tween>();
     }
 
     #region Speaker
@@ -28,7 +32,7 @@ public class DialogueTween : MonoBehaviour
         if (m_speakerNameIsVisible)
             return;
 
-        m_speakerBox.DOLocalMoveY(0f, 0.5f).SetEase(Ease.InOutCirc);
+        m_speakerBox.DOLocalMoveY(0f, 0.2f).SetEase(Ease.InOutCirc);
         m_speakerNameIsVisible = true;
     }
 
@@ -39,7 +43,7 @@ public class DialogueTween : MonoBehaviour
             return 0;
 
         m_speakerNameIsVisible = false;
-        return m_speakerBox.DOLocalMoveY(-65f, 0.5f).SetEase(Ease.InOutCirc).Duration();
+        return m_speakerBox.DOLocalMoveY(-65f, 0.2f).SetEase(Ease.InOutCirc).Duration();
     }
 
     //Change the name of the speaker, if the name is hidden will remain hidden
@@ -51,10 +55,10 @@ public class DialogueTween : MonoBehaviour
         }
 
         Sequence seq = DOTween.Sequence();
-        seq.Append(m_speakerBox.DOLocalMoveY(-65f, 0.3f).SetEase(Ease.InOutCirc)
+        seq.Append(m_speakerBox.DOLocalMoveY(-65f, 0.2f).SetEase(Ease.InOutCirc)
             .OnComplete(() => m_speakerName.text = name));
-        seq.AppendInterval(0.2f);
-        seq.Append(m_speakerBox.DOLocalMoveY(0f, 0.3f).SetEase(Ease.InOutCirc));
+        seq.AppendInterval(0.1f);
+        seq.Append(m_speakerBox.DOLocalMoveY(0f, 0.2f).SetEase(Ease.InOutCirc));
     }
     #endregion
 
@@ -100,10 +104,71 @@ public class DialogueTween : MonoBehaviour
 
     #region Choices
 
-    public void showChoices()
+    //recursivity boy
+    public float showChoices(List<GameObject> m_choices, int index)
     {
+        if (index < 1)
+            return 0;
 
+        GameObject button = m_choices[index-1];
+        button.SetActive(true);
+        button.transform.localScale = new Vector3(0.9f, 0.9f, 0.9f);
+        button.GetComponent<CanvasGroup>().alpha = 0;
+
+        Sequence seq = DOTween.Sequence();
+        seq.PrependInterval(showChoices(m_choices, index -1));
+        seq.Append(button.transform.DOScale(Vector3.one, 0.1f)).SetEase(Ease.InOutCirc);
+        seq.Join(button.GetComponent<CanvasGroup>().DOFade(1, 0.1f)).SetEase(Ease.InOutCirc);
+        return seq.Duration();
     }
+
+    public float hideChoices(List<GameObject> m_choices, int index)
+    {
+        if (index >= m_choices.Count)
+            return 0;
+
+        GameObject button = m_choices[index];
+        button.SetActive(true);
+        button.transform.localScale = Vector3.one;
+        button.GetComponent<CanvasGroup>().alpha = 1;
+
+        Sequence seq = DOTween.Sequence();
+        seq.PrependInterval(hideChoices(m_choices, index + 1));
+        seq.Append(button.transform.DOScale(new Vector3(0.9f, 0.9f, 0.9f), 0.1f)).SetEase(Ease.InOutCirc);
+        seq.Join(button.GetComponent<CanvasGroup>().DOFade(0, 0.05f)).SetEase(Ease.InOutCirc);
+        return seq.Duration();
+    }
+
+    public void showArrows(List<GameObject> m_choices)
+    {
+        foreach(GameObject button in m_choices)
+        {
+            GameObject arrow = button.transform.GetChild(1).gameObject;
+
+            Tween arrowAnimation = arrow.transform.DOLocalMoveX(arrow.transform.localPosition.x + 5, 0.5f).SetLoops(-1, LoopType.Yoyo);
+            m_arrows.Add(arrowAnimation);
+        }
+    }
+    
+    public void hideArrows()
+    {
+        foreach(Tween arrowAnimation in m_arrows)
+        {
+            arrowAnimation.Kill();
+        }
+        m_arrows.Clear();
+    }
+
+    //public void SelectButton(GameObject button)
+    //{
+    //    button.transform.DOLocalMoveX(20, 0.2f);
+    //}
+
+    //public void UnselectButton(GameObject button)
+    //{
+    //    button.transform.DOLocalMoveX(0, 0.2f);
+    //}
+
 
     #endregion
 }

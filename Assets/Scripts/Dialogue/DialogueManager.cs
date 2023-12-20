@@ -36,8 +36,8 @@ public class DialogueManager : MonoBehaviour
     [Header("Choices UI")]
     [SerializeField] private GameObject m_choiceButtonPrefab;
     [SerializeField] private GameObject m_buttonContainer;
+    //[SerializeField] private VerticalLayoutGroup m_verticalLayerGroup;
     private List<GameObject> m_choices;
-
 
     //Audio
     private DialogueAudio m_DialogueAudio;
@@ -52,7 +52,7 @@ public class DialogueManager : MonoBehaviour
 
     private bool m_canEnterDialogue;
     private bool m_dialogueIsPlaying;
-    private bool m_optionDisplay;
+    private bool m_optionsDisplay;
     private bool m_textIsWriting;
 
 
@@ -82,7 +82,7 @@ public class DialogueManager : MonoBehaviour
         m_canEnterDialogue = true;
         m_textIsWriting = false;
         m_dialogueIsPlaying = false;
-        m_optionDisplay = false;
+        m_optionsDisplay = false;
         m_choices = new List<GameObject>();
         m_tween = GetComponent<DialogueTween>();
     }
@@ -223,11 +223,12 @@ public class DialogueManager : MonoBehaviour
         List<Choice> currentChoices = m_currentStory.currentChoices;
 
         if (currentChoices.Count == 0) {
-            m_optionDisplay = false;
+            m_optionsDisplay = false;
             yield break;
         }
         m_tween.hideContinueIcon();
-        m_optionDisplay = true;
+        m_optionsDisplay = true;
+        //m_verticalLayerGroup.enabled = true;
 
         //to avoid problems with the input
         yield return new WaitForSeconds(m_ExitDialogueTime);
@@ -239,8 +240,6 @@ public class DialogueManager : MonoBehaviour
             button.gameObject.SetActive(false);
             button.GetComponentInChildren<TextMeshProUGUI>().text = currentChoices[index].text;
             button.GetComponent<Button>().interactable = false;
-            //the button resize base on the text on awake
-            button.gameObject.SetActive(true); 
 
             //Assign each button the make choice action
             int i = index; //Save the index value in a different variable to avoid changing it in the next loop
@@ -264,25 +263,34 @@ public class DialogueManager : MonoBehaviour
             m_choices[i].GetComponent<Button>().navigation = navigation;
         }
 
+        //wait to the show choices animation to complete
+        yield return new WaitForSeconds(m_tween.showChoices(m_choices, m_choices.Count));
+
+        //m_verticalLayerGroup.enabled = false; //to freely animate the buttons
+
         //select the first button
         EventSystem.current.SetSelectedGameObject(m_choices[0]);
 
-        StartCoroutine(EnableButtons());
+        EnableButtons();
     }
 
     //remove all choices
-    private void RemoveChoices()
+    IEnumerator RemoveChoices(float time)
     {
+        yield return new WaitForSeconds(time);
+        m_tween.hideArrows();
+
         foreach (GameObject button in m_choices)
             Destroy(button);
 
         m_choices.Clear();
+        ContinueStory();
     }
 
     //enable all displaced buttons with a little delay time to avoid problems with the input
-    private IEnumerator EnableButtons()
+    private void EnableButtons()
     {
-        yield return new WaitForSeconds(m_ExitDialogueTime);
+        m_tween.showArrows(m_choices);
 
         for (int i = 0; i < m_currentStory.currentChoices.Count; i++)
         {
@@ -355,19 +363,24 @@ public class DialogueManager : MonoBehaviour
     #region Inputs
     public void OnContinue(InputAction.CallbackContext context)
     {
-        if (context.performed & !m_optionDisplay)
+        if (context.performed & !m_optionsDisplay)
             ContinueStory();
     }
 
     //reads the options buttons inputs
     public void MakeChoice(int choiceIndex)
     {
-        m_currentStory.ChooseChoiceIndex(choiceIndex);
-        m_optionDisplay = false;
+        //unable buttons
+        for (int i = 0; i < m_currentStory.currentChoices.Count; i++)
+        {
+            m_choices[i].GetComponent<Button>().interactable = false;
+        }
 
-        //remove current choices and display the next line
-        RemoveChoices();
-        ContinueStory();
+        m_currentStory.ChooseChoiceIndex(choiceIndex);
+        m_optionsDisplay = false;
+
+        //remove current choices with an animation and display the next line
+        StartCoroutine(RemoveChoices(m_tween.hideChoices(m_choices, 0)));
     }
 
     #endregion
