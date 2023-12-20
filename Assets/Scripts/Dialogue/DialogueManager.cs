@@ -264,6 +264,12 @@ public class DialogueManager : MonoBehaviour
         }
 
         //wait to the show choices animation to complete
+        //LayoutRebuilder.ForceRebuildLayoutImmediate(m_verticalLayerGroup.gameObject.GetComponent<RectTransform>());
+        //yield return new WaitForEndOfFrame();
+        //m_verticalLayerGroup.enabled = true;
+
+        //LayoutRebuilder.ForceRebuildLayoutImmediate(m_buttonContainer.GetComponent<RectTransform>());
+
         yield return new WaitForSeconds(m_tween.showChoices(m_choices, m_choices.Count));
 
         //m_verticalLayerGroup.enabled = false; //to freely animate the buttons

@@ -18,6 +18,9 @@ public class ChoiceButton : MonoBehaviour, ISelectHandler, IDeselectHandler
     void Start()
     {
         m_layoutElement.enabled = (m_contentField.preferredWidth > m_layoutElement.preferredWidth);
+        //layout rebuild to force the verticalLayerGroup of the parent work as intented
+        LayoutRebuilder.ForceRebuildLayoutImmediate(gameObject.GetComponent<RectTransform>());
+        m_selectIcon.SetActive(false);
     }
 
     public void OnSelect(BaseEventData eventData)
