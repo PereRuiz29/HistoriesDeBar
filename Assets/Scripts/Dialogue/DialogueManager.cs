@@ -14,29 +14,33 @@ public class DialogueManager : MonoBehaviour
     private static DialogueManager instance;
 
     //Dialogue tags
-    private const string SPEAKER_TAG = "speaker";
-    private const string AUDIO_TAG = "audio";
-    private const string RESIZE_TAG = "resize";
+    private const string SPEAKER_TAG = "speaker";   // show / hide / "speakerName"
+    private const string AUDIO_TAG = "audio";       // "audio Info id"
+    private const string AUDIOPREDICT_TAG = "audioPredict";     // enable / disable
+    private const string RESIZE_TAG = "resize";     // enable / disable
+    private const string TEXTVELOCITY_TAG = "textVelocity";     // "value"
+    
 
+    [Header("Dialogue Box")]
     [Tooltip("The panel box resize based on the text size")]
     [SerializeField] private bool m_resizePanel;
     [SerializeField] private int m_preferredWidth;
     [SerializeField] private int m_preferredHeight;
     [SerializeField] private LayoutElement m_layoutElement;
 
-
     [Header("Dialogue UI")]
     [SerializeField] private GameObject m_dialoguePanel;
     [SerializeField] private TextMeshProUGUI m_dialogueText;
     [SerializeField] private float m_ExitDialogueTime;
-
     [Range(0.1f, 0.01f)]
     [SerializeField] private float m_TextVelocity;
+    private Story m_currentStory;
+    private Coroutine m_displayTextCoroutine;
+
 
     [Header("Choices UI")]
     [SerializeField] private GameObject m_choiceButtonPrefab;
     [SerializeField] private GameObject m_buttonContainer;
-    //[SerializeField] private VerticalLayoutGroup m_verticalLayerGroup;
     private List<GameObject> m_choices;
 
     //Audio
@@ -44,21 +48,12 @@ public class DialogueManager : MonoBehaviour
     //Animations
     private DialogueTween m_tween;
 
-
-    private Coroutine m_displayTextCoroutine;
-    private Story m_currentStory;
-
-
-
     private bool m_canEnterDialogue;
-    private bool m_dialogueIsPlaying;
     private bool m_optionsDisplay;
     private bool m_textIsWriting;
 
 
-
-    //accessor
-    public bool dialogueIsPlaying => m_dialogueIsPlaying;
+    #region Enable
 
     private void Awake()
     {
@@ -67,9 +62,6 @@ public class DialogueManager : MonoBehaviour
             Debug.LogError("Found more than one Dialogue Manger in the scene!");
         }
         instance = this;
-
-        m_DialogueAudio = GetComponent<DialogueAudio>();
-        m_dialoguePanel.GetComponent<CanvasGroup>().alpha = 0;
     }
 
     public static DialogueManager GetInstance()
@@ -81,10 +73,12 @@ public class DialogueManager : MonoBehaviour
     {
         m_canEnterDialogue = true;
         m_textIsWriting = false;
-        m_dialogueIsPlaying = false;
         m_optionsDisplay = false;
         m_choices = new List<GameObject>();
+
+        m_DialogueAudio = GetComponent<DialogueAudio>();
         m_tween = GetComponent<DialogueTween>();
+        m_dialoguePanel.GetComponent<CanvasGroup>().alpha = 0;
     }
 
     //open the dialogue box and handle the input
@@ -98,7 +92,6 @@ public class DialogueManager : MonoBehaviour
         GameManager.GetInstance().EnterDialogue();
 
         m_currentStory = new Story(inkJSON.text);
-        m_dialogueIsPlaying = true;
 
         m_tween.openDialogue();
         ContinueStory();
@@ -116,12 +109,12 @@ public class DialogueManager : MonoBehaviour
         //exit animation
         m_tween.closeDialogue();
 
-        yield return new WaitForSeconds(1);
-        m_dialogueIsPlaying = false;
+        yield return new WaitForSeconds(0.7f);
         m_dialogueText.text = "";
         m_canEnterDialogue = true;
     }
 
+    #endregion
 
     #region Text
 
@@ -149,14 +142,12 @@ public class DialogueManager : MonoBehaviour
     private IEnumerator DisplayText(string line)
     {
         m_dialogueText.text = line;
-        ResizePanel();
         m_dialogueText.maxVisibleCharacters = 0;
         m_textIsWriting = true;
         m_tween.hideContinueIcon();
+        ResizePanel();
 
         bool isAddingRichTextTag = false;
-
-
         foreach (char letter in line)
         {
             //loops until pass the ritch text tag without waiting
@@ -214,7 +205,6 @@ public class DialogueManager : MonoBehaviour
 
     #endregion
 
-
     #region Choices
 
     //display the button choices when need it
@@ -228,7 +218,6 @@ public class DialogueManager : MonoBehaviour
         }
         m_tween.hideContinueIcon();
         m_optionsDisplay = true;
-        //m_verticalLayerGroup.enabled = true;
 
         //to avoid problems with the input
         yield return new WaitForSeconds(m_ExitDialogueTime);
@@ -250,7 +239,7 @@ public class DialogueManager : MonoBehaviour
             index++;
         }
 
-        //set circular button navigation
+        //set circular buttons navigation
         int nButtons = m_choices.Count;
         for (int i = 0; i < nButtons; i++)
         {
@@ -263,21 +252,23 @@ public class DialogueManager : MonoBehaviour
             m_choices[i].GetComponent<Button>().navigation = navigation;
         }
 
-        //wait to the show choices animation to complete
-        //LayoutRebuilder.ForceRebuildLayoutImmediate(m_verticalLayerGroup.gameObject.GetComponent<RectTransform>());
-        //yield return new WaitForEndOfFrame();
-        //m_verticalLayerGroup.enabled = true;
-
-        //LayoutRebuilder.ForceRebuildLayoutImmediate(m_buttonContainer.GetComponent<RectTransform>());
-
         yield return new WaitForSeconds(m_tween.showChoices(m_choices, m_choices.Count));
-
-        //m_verticalLayerGroup.enabled = false; //to freely animate the buttons
 
         //select the first button
         EventSystem.current.SetSelectedGameObject(m_choices[0]);
 
         EnableButtons();
+    }
+
+    //enable all displaced buttons with a little delay time to avoid problems with the input
+    private void EnableButtons()
+    {
+        m_tween.showArrows(m_choices);
+
+        for (int i = 0; i < m_currentStory.currentChoices.Count; i++)
+        {
+            m_choices[i].GetComponent<Button>().interactable = true;
+        }
     }
 
     //remove all choices
@@ -291,17 +282,6 @@ public class DialogueManager : MonoBehaviour
 
         m_choices.Clear();
         ContinueStory();
-    }
-
-    //enable all displaced buttons with a little delay time to avoid problems with the input
-    private void EnableButtons()
-    {
-        m_tween.showArrows(m_choices);
-
-        for (int i = 0; i < m_currentStory.currentChoices.Count; i++)
-        {
-            m_choices[i].GetComponent<Button>().interactable = true;
-        }
     }
 
     #endregion
@@ -329,8 +309,14 @@ public class DialogueManager : MonoBehaviour
                 case AUDIO_TAG:
                     m_DialogueAudio.SetAudioInfo(tagValue);
                     break;
+                case AUDIOPREDICT_TAG:
+                    m_DialogueAudio.SetAudioInfo(tagValue);
+                    break;
                 case RESIZE_TAG:
                     ResizeBox(tagValue);
+                    break;
+                case TEXTVELOCITY_TAG:
+                    TextVeocity(tagValue);
                     break;
                 default:
                     Debug.LogError("Unexpecter tag: " + tagKey);
@@ -351,17 +337,22 @@ public class DialogueManager : MonoBehaviour
     }
 
     //enable or dissable the box resizing based on the text size
-    void ResizeBox(string toogle)
+    void ResizeBox(string toggle)
     {
-        if (toogle == "enabled")
+        if (toggle == "enable")
             m_resizePanel = true;
-        else if (toogle == "disabled")
+        else if (toggle == "disable")
             m_resizePanel = false;
         else
-            Debug.LogError("Error on Resize tag: " + toogle + " option not expected");
+            Debug.LogError("Error on Resize tag: " + toggle + " option not expected");
 
     }
 
+
+    void TextVeocity(string value)
+    {
+        m_TextVelocity =  float.Parse(value);
+    }
 
 
     #endregion

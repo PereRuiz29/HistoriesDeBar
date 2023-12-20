@@ -621,8 +621,8 @@ GameObject:
   - component: {fileID: 4490578691834951467}
   - component: {fileID: 8015382644680181176}
   - component: {fileID: 8750622604457209615}
-  - component: {fileID: 6015970150821808296}
   - component: {fileID: 4283730709427971953}
+  - component: {fileID: 6015970150821808296}
   m_Layer: 0
   m_Name: Dialogue Manager
   m_TagString: Untagged
@@ -736,7 +736,6 @@ MonoBehaviour:
   m_TextVelocity: 0.0418
   m_choiceButtonPrefab: {fileID: 3680312994939382405, guid: cf4e68e00f1028d4996b95ab91fcaa48, type: 3}
   m_buttonContainer: {fileID: 3398236711882804959}
-  m_verticalLayerGroup: {fileID: 332951338115531602}
 --- !u!114 &8750622604457209615
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -795,6 +794,22 @@ MonoBehaviour:
   m_DefaultActionMap: Dialogue
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &4283730709427971953
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4462437611295760351}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c895d32ae3761e54b9d3feb08a0d066d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_speakerBox: {fileID: 979781659020676194}
+  m_speakerName: {fileID: 5635208382355243697}
+  m_mainBox: {fileID: 2153867568157577584}
+  m_continueIcon: {fileID: 8586987759795143928}
 --- !u!114 &6015970150821808296
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -812,22 +827,6 @@ MonoBehaviour:
   m_AudioInfos:
   - {fileID: 11400000, guid: ea4f7bb14bfdee340890b592469a01f8, type: 2}
   - {fileID: 11400000, guid: 1ae0290399977244e85df6333abb351e, type: 2}
---- !u!114 &4283730709427971953
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4462437611295760351}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c895d32ae3761e54b9d3feb08a0d066d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_speakerBox: {fileID: 979781659020676194}
-  m_speakerName: {fileID: 5635208382355243697}
-  m_mainBox: {fileID: 2153867568157577584}
-  m_continueIcon: {fileID: 8586987759795143928}
 --- !u!1 &4751235846174454674
 GameObject:
   m_ObjectHideFlags: 0

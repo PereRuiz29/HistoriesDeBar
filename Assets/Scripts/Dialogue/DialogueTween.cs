@@ -22,6 +22,7 @@ public class DialogueTween : MonoBehaviour
     private void Start()
     {
         m_continueIcon.gameObject.SetActive(false);
+        //save all tween
         m_arrows = new List<Tween>();
     }
 
@@ -104,7 +105,9 @@ public class DialogueTween : MonoBehaviour
 
     #region Choices
 
-    //recursivity boy
+    //Show all button in order top to bottom recursively
+    //Pre: List of the buttons and the idex of the last button
+    //Post: The delay of the animation
     public float showChoices(List<GameObject> m_choices, int index)
     {
         if (index < 1)
@@ -122,15 +125,20 @@ public class DialogueTween : MonoBehaviour
         return seq.Duration();
     }
 
+    //Hide all the buttons bottom to top recursively
+    //Pre: List of the buttons and the idex first
+    //Post: The delay of the animation
     public float hideChoices(List<GameObject> m_choices, int index)
     {
         if (index >= m_choices.Count)
             return 0;
 
         GameObject button = m_choices[index];
-        button.SetActive(true);
-        button.transform.localScale = Vector3.one;
-        button.GetComponent<CanvasGroup>().alpha = 1;
+        //button.SetActive(true);
+        //button.transform.localScale = Vector3.one;
+        //button.GetComponent<CanvasGroup>().alpha = 1;
+        //button.GetComponent<ChoiceButton>().playAudio = false;
+
 
         Sequence seq = DOTween.Sequence();
         seq.PrependInterval(hideChoices(m_choices, index + 1));
@@ -139,6 +147,7 @@ public class DialogueTween : MonoBehaviour
         return seq.Duration();
     }
 
+    //Set a loop animation to the buttons arrows
     public void showArrows(List<GameObject> m_choices)
     {
         foreach(GameObject button in m_choices)
@@ -150,6 +159,7 @@ public class DialogueTween : MonoBehaviour
         }
     }
     
+    //kill the animation of all arrows
     public void hideArrows()
     {
         foreach(Tween arrowAnimation in m_arrows)
@@ -158,17 +168,6 @@ public class DialogueTween : MonoBehaviour
         }
         m_arrows.Clear();
     }
-
-    //public void SelectButton(GameObject button)
-    //{
-    //    button.transform.DOLocalMoveX(20, 0.2f);
-    //}
-
-    //public void UnselectButton(GameObject button)
-    //{
-    //    button.transform.DOLocalMoveX(0, 0.2f);
-    //}
-
 
     #endregion
 }

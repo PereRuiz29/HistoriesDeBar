@@ -14,6 +14,12 @@ public class ChoiceButton : MonoBehaviour, ISelectHandler, IDeselectHandler
     [SerializeField] private LayoutElement m_layoutElement;
 
     [SerializeField] private GameObject m_selectIcon;
+    [SerializeField] private AudioClip m_selectSound;
+    [SerializeField] private AudioClip m_pressSound;
+
+    private AudioSource m_AudioSource;
+    public bool playAudio;
+
 
     void Start()
     {
@@ -21,6 +27,9 @@ public class ChoiceButton : MonoBehaviour, ISelectHandler, IDeselectHandler
         //layout rebuild to force the verticalLayerGroup of the parent work as intented
         LayoutRebuilder.ForceRebuildLayoutImmediate(gameObject.GetComponent<RectTransform>());
         m_selectIcon.SetActive(false);
+
+        playAudio = true;
+        m_AudioSource = this.gameObject.AddComponent<AudioSource>();
     }
 
     public void OnSelect(BaseEventData eventData)
@@ -33,5 +42,8 @@ public class ChoiceButton : MonoBehaviour, ISelectHandler, IDeselectHandler
     {
         m_selectIcon.SetActive(false);
         transform.DOLocalMoveX(0, 0.2f);
+        //Avoid play audio when the buttons are destroyed
+        if(GetComponent<Button>().interactable)
+            m_AudioSource.PlayOneShot(m_selectSound);
     }
 }
