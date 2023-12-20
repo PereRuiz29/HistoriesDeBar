@@ -21,5 +21,5 @@ public class DialogueAudioInfoSO : ScriptableObject
     public float minPitch = -1f;
 
     [Tooltip("Stop the dialogue audio immediately before playing the next one to avoid overlap.")]
-    public bool stopAudio;
+    public bool avoidOverlap;
 }

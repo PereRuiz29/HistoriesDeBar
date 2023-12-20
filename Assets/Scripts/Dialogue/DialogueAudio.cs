@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class DialogueAudio : MonoBehaviour
 {
-
     private AudioSource m_typingAudioSource;
 
     [Tooltip("Characters always sound the same way or sound completely random.")]
@@ -16,19 +15,16 @@ public class DialogueAudio : MonoBehaviour
     [SerializeField] private DialogueAudioInfoSO[] m_AudioInfos;
     private Dictionary<string, DialogueAudioInfoSO> m_AudioInfoDiccionary;
 
-
     //Audio configuration
     private AudioClip[] m_dialogueTypingAudioClips;
     private int m_FrequencyLevel;
     private float m_MaxPitch;
     private float m_MinPitch;
-    private bool m_stopAudio;
+    private bool m_avoidOverlap;
 
     void Awake()
     {
         m_typingAudioSource = this.gameObject.AddComponent<AudioSource>();
-
-        //debug
     }
 
     private void Start()
@@ -45,6 +41,17 @@ public class DialogueAudio : MonoBehaviour
             m_AudioInfoDiccionary.Add(audioInfo.id, audioInfo);
     }
 
+    //Active hash or make audio random
+    public void MakeAudioPrectable(string toggle)
+    {
+        if (toggle == "enable")
+            m_MakePredictable = true;
+        else if (toggle == "disable")
+            m_MakePredictable = false;
+        else
+            Debug.LogError("Error on AudioPredict tag: " + toggle + " option not expected");
+    }
+
     //Set all the audio configurations to the chosen charater audio info
     public void SetAudioInfo(string id)
     {
@@ -56,8 +63,7 @@ public class DialogueAudio : MonoBehaviour
             m_FrequencyLevel = currentAudioInfo.frequencyLevel;
             m_MaxPitch = currentAudioInfo.maxPitch;
             m_MinPitch = currentAudioInfo.minPitch;
-            m_stopAudio = currentAudioInfo.stopAudio;
-
+            m_avoidOverlap = currentAudioInfo.avoidOverlap;
         }
         else
         {
@@ -66,7 +72,7 @@ public class DialogueAudio : MonoBehaviour
             m_FrequencyLevel = m_DefaultAudioInfo.frequencyLevel;
             m_MaxPitch = m_DefaultAudioInfo.maxPitch;
             m_MinPitch = m_DefaultAudioInfo.minPitch;
-            m_stopAudio = m_DefaultAudioInfo.stopAudio;
+            m_avoidOverlap = m_DefaultAudioInfo.avoidOverlap;
         }
     }
 
@@ -74,7 +80,7 @@ public class DialogueAudio : MonoBehaviour
     {
         if (characterDisplayCounter % m_FrequencyLevel == 0)
         {
-            if (m_stopAudio)
+            if (m_avoidOverlap)
                 m_typingAudioSource.Stop();
 
             if (m_MakePredictable)

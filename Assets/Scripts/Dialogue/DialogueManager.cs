@@ -14,48 +14,46 @@ public class DialogueManager : MonoBehaviour
     private static DialogueManager instance;
 
     //Dialogue tags
-    private const string SPEAKER_TAG = "speaker";
-    private const string AUDIO_TAG = "audio";
-    private const string RESIZE_TAG = "resize";
+    private const string SPEAKER_TAG = "speaker";   // show / hide / "speakerName"
+    private const string AUDIO_TAG = "audio";       // "audio Info id"
+    private const string AUDIOPREDICT_TAG = "audioPredict";     // enable / disable
+    private const string RESIZE_TAG = "resize";     // enable / disable
+    private const string TEXTVELOCITY_TAG = "textVelocity";     // "value"
+    
 
+    [Header("Dialogue Box")]
     [Tooltip("The panel box resize based on the text size")]
     [SerializeField] private bool m_resizePanel;
     [SerializeField] private int m_preferredWidth;
     [SerializeField] private int m_preferredHeight;
     [SerializeField] private LayoutElement m_layoutElement;
 
-
     [Header("Dialogue UI")]
     [SerializeField] private GameObject m_dialoguePanel;
-    [SerializeField] private TextMeshProUGUI m_speakerName;
     [SerializeField] private TextMeshProUGUI m_dialogueText;
     [SerializeField] private float m_ExitDialogueTime;
-
     [Range(0.1f, 0.01f)]
     [SerializeField] private float m_TextVelocity;
+    private Story m_currentStory;
+    private Coroutine m_displayTextCoroutine;
 
-    [Header("Continue UI")]
-    [Tooltip("UI Image to show when you can continue to the next dialogue line, or end the dialogue.")]
-    [SerializeField] private GameObject m_continueIcon;
 
     [Header("Choices UI")]
     [SerializeField] private GameObject m_choiceButtonPrefab;
     [SerializeField] private GameObject m_buttonContainer;
     private List<GameObject> m_choices;
 
-
     //Audio
-    private DialogueAudio m_DialogueAudio; 
+    private DialogueAudio m_DialogueAudio;
+    //Animations
+    private DialogueTween m_tween;
 
-    private Coroutine m_displayTextCoroutine;
-    private Story m_currentStory;
-
-    private bool m_dialogueIsPlaying;
-    private bool m_optionDisplay;
+    private bool m_canEnterDialogue;
+    private bool m_optionsDisplay;
     private bool m_textIsWriting;
 
-    //accessor
-    public bool dialogueIsPlaying => m_dialogueIsPlaying;
+
+    #region Enable
 
     private void Awake()
     {
@@ -64,8 +62,6 @@ public class DialogueManager : MonoBehaviour
             Debug.LogError("Found more than one Dialogue Manger in the scene!");
         }
         instance = this;
-
-        m_DialogueAudio = GetComponent<DialogueAudio>();
     }
 
     public static DialogueManager GetInstance()
@@ -75,40 +71,50 @@ public class DialogueManager : MonoBehaviour
 
     private void Start()
     {
+        m_canEnterDialogue = true;
         m_textIsWriting = false;
-        m_dialogueIsPlaying = false;
-        m_optionDisplay = false;
-        m_dialoguePanel.SetActive(false);
-        m_continueIcon.SetActive(false);
+        m_optionsDisplay = false;
         m_choices = new List<GameObject>();
+
+        m_DialogueAudio = GetComponent<DialogueAudio>();
+        m_tween = GetComponent<DialogueTween>();
+        m_dialoguePanel.GetComponent<CanvasGroup>().alpha = 0;
     }
 
     //open the dialogue box and handle the input
     public void EnterDialogueMode(TextAsset inkJSON)
     {
+        //to evoid problems if spam inputs
+        if (!m_canEnterDialogue)
+            return;
+
         //change action map
         GameManager.GetInstance().EnterDialogue();
 
         m_currentStory = new Story(inkJSON.text);
-        m_dialogueIsPlaying = true;
-        m_dialoguePanel.SetActive(true);
 
+        m_tween.openDialogue();
         ContinueStory();
     }
 
     //close the dialogue box and handle the input
     private IEnumerator ExitDialogueMode()
     {
+        m_canEnterDialogue = false;
         yield return new WaitForSeconds(m_ExitDialogueTime);
 
         //change action map
         GameManager.GetInstance().ExitDialogue();
 
-        m_dialogueIsPlaying = false;
-        m_dialoguePanel.SetActive(false);
+        //exit animation
+        m_tween.closeDialogue();
+
+        yield return new WaitForSeconds(0.7f);
         m_dialogueText.text = "";
+        m_canEnterDialogue = true;
     }
 
+    #endregion
 
     #region Text
 
@@ -136,14 +142,12 @@ public class DialogueManager : MonoBehaviour
     private IEnumerator DisplayText(string line)
     {
         m_dialogueText.text = line;
-        ResizePanel();
         m_dialogueText.maxVisibleCharacters = 0;
         m_textIsWriting = true;
-        m_continueIcon.SetActive(false);
+        m_tween.hideContinueIcon();
+        ResizePanel();
 
         bool isAddingRichTextTag = false;
-
-
         foreach (char letter in line)
         {
             //loops until pass the ritch text tag without waiting
@@ -164,7 +168,7 @@ public class DialogueManager : MonoBehaviour
         }
 
         m_textIsWriting = false;
-        m_continueIcon.SetActive(true);
+        m_tween.ShowContinueIcon();
         StartCoroutine(DisplayChoices());
     }
 
@@ -192,7 +196,7 @@ public class DialogueManager : MonoBehaviour
     private void DisplayTextImmediately()
     {
         m_textIsWriting = false;
-        m_continueIcon.SetActive(true);
+        m_tween.ShowContinueIcon();
         StopCoroutine(m_displayTextCoroutine);
 
         m_dialogueText.maxVisibleCharacters = m_currentStory.currentText.Length;
@@ -200,7 +204,6 @@ public class DialogueManager : MonoBehaviour
     }
 
     #endregion
-
 
     #region Choices
 
@@ -210,11 +213,11 @@ public class DialogueManager : MonoBehaviour
         List<Choice> currentChoices = m_currentStory.currentChoices;
 
         if (currentChoices.Count == 0) {
-            m_optionDisplay = false;
+            m_optionsDisplay = false;
             yield break;
         }
-        m_continueIcon.SetActive(false);
-        m_optionDisplay = true;
+        m_tween.hideContinueIcon();
+        m_optionsDisplay = true;
 
         //to avoid problems with the input
         yield return new WaitForSeconds(m_ExitDialogueTime);
@@ -226,8 +229,6 @@ public class DialogueManager : MonoBehaviour
             button.gameObject.SetActive(false);
             button.GetComponentInChildren<TextMeshProUGUI>().text = currentChoices[index].text;
             button.GetComponent<Button>().interactable = false;
-            //the button resize base on the text on awake
-            button.gameObject.SetActive(true); 
 
             //Assign each button the make choice action
             int i = index; //Save the index value in a different variable to avoid changing it in the next loop
@@ -238,7 +239,7 @@ public class DialogueManager : MonoBehaviour
             index++;
         }
 
-        //set circular button navigation
+        //set circular buttons navigation
         int nButtons = m_choices.Count;
         for (int i = 0; i < nButtons; i++)
         {
@@ -251,30 +252,36 @@ public class DialogueManager : MonoBehaviour
             m_choices[i].GetComponent<Button>().navigation = navigation;
         }
 
+        yield return new WaitForSeconds(m_tween.showChoices(m_choices, m_choices.Count));
+
         //select the first button
         EventSystem.current.SetSelectedGameObject(m_choices[0]);
 
-        StartCoroutine(EnableButtons());
-    }
-
-    //remove all choices
-    private void RemoveChoices()
-    {
-        foreach (GameObject button in m_choices)
-            Destroy(button);
-
-        m_choices.Clear();
+        EnableButtons();
     }
 
     //enable all displaced buttons with a little delay time to avoid problems with the input
-    private IEnumerator EnableButtons()
+    private void EnableButtons()
     {
-        yield return new WaitForSeconds(m_ExitDialogueTime);
+        m_tween.showArrows(m_choices);
 
         for (int i = 0; i < m_currentStory.currentChoices.Count; i++)
         {
             m_choices[i].GetComponent<Button>().interactable = true;
         }
+    }
+
+    //remove all choices
+    IEnumerator RemoveChoices(float time)
+    {
+        yield return new WaitForSeconds(time);
+        m_tween.hideArrows();
+
+        foreach (GameObject button in m_choices)
+            Destroy(button);
+
+        m_choices.Clear();
+        ContinueStory();
     }
 
     #endregion
@@ -302,8 +309,14 @@ public class DialogueManager : MonoBehaviour
                 case AUDIO_TAG:
                     m_DialogueAudio.SetAudioInfo(tagValue);
                     break;
+                case AUDIOPREDICT_TAG:
+                    m_DialogueAudio.SetAudioInfo(tagValue);
+                    break;
                 case RESIZE_TAG:
                     ResizeBox(tagValue);
+                    break;
+                case TEXTVELOCITY_TAG:
+                    TextVeocity(tagValue);
                     break;
                 default:
                     Debug.LogError("Unexpecter tag: " + tagKey);
@@ -315,21 +328,31 @@ public class DialogueManager : MonoBehaviour
     //Display the name of the speaker on the top of the dialogue box
     void DisplaySpeakerName(string name)
     {
-        m_speakerName.text = name;
+        if (name == "show")
+            m_tween.ShowSpeakerName();
+        else if (name == "hide")
+            m_tween.HideSpeakerName();
+        else
+            m_tween.ChangeSpeakerName(name);
     }
 
     //enable or dissable the box resizing based on the text size
-    void ResizeBox(string toogle)
+    void ResizeBox(string toggle)
     {
-        if (toogle == "enabled")
+        if (toggle == "enable")
             m_resizePanel = true;
-        else if (toogle == "disabled")
+        else if (toggle == "disable")
             m_resizePanel = false;
         else
-            Debug.LogError("Error on Resize tag: " + toogle + " option not expected");
+            Debug.LogError("Error on Resize tag: " + toggle + " option not expected");
 
     }
 
+
+    void TextVeocity(string value)
+    {
+        m_TextVelocity =  float.Parse(value);
+    }
 
 
     #endregion
@@ -337,19 +360,24 @@ public class DialogueManager : MonoBehaviour
     #region Inputs
     public void OnContinue(InputAction.CallbackContext context)
     {
-        if (context.performed & !m_optionDisplay)
+        if (context.performed & !m_optionsDisplay)
             ContinueStory();
     }
 
     //reads the options buttons inputs
     public void MakeChoice(int choiceIndex)
     {
-        m_currentStory.ChooseChoiceIndex(choiceIndex);
-        m_optionDisplay = false;
+        //unable buttons
+        for (int i = 0; i < m_currentStory.currentChoices.Count; i++)
+        {
+            m_choices[i].GetComponent<Button>().interactable = false;
+        }
 
-        //remove current choices and display the next line
-        RemoveChoices();
-        ContinueStory();
+        m_currentStory.ChooseChoiceIndex(choiceIndex);
+        m_optionsDisplay = false;
+
+        //remove current choices with an animation and display the next line
+        StartCoroutine(RemoveChoices(m_tween.hideChoices(m_choices, 0)));
     }
 
     #endregion
