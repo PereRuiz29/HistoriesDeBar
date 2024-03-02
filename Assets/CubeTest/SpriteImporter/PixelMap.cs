@@ -1,7 +1,7 @@
 using Common;
 using UnityEngine;
 
-namespace Editor
+namespace SpriteImporter
 {
     public class PixelMap : ScriptableObject
     {
