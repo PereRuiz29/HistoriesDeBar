@@ -37,7 +37,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: f753a26c5a91fc34f89415de180aa78e, type: 3}
+        m_Texture: {fileID: 2800000, guid: 0fdcefdef3b4b6344a5cf34a5ce5f685, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalMap:
@@ -45,7 +45,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SkinTex:
-        m_Texture: {fileID: 2800000, guid: 5c5289a4eb97e1c4f861f8c1128c87e3, type: 3}
+        m_Texture: {fileID: 2800000, guid: bfeef9c19302e3b4fb0090f6dca798ea, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:

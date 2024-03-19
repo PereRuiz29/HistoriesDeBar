@@ -16,9 +16,12 @@ public class CharacterMovement : MonoBehaviour
 
     private GameObject m_camera;
 
+    private CharacterAnimator m_animator;
+
     void Start()
     {
         m_CharacterMovement = gameObject.GetComponent<CharacterController>();
+        m_animator = GetComponent<CharacterAnimator>();
         m_camera = GameObject.Find("Main Camera");
     }
 
@@ -41,8 +44,15 @@ public class CharacterMovement : MonoBehaviour
         float cameraAngle = m_camera.transform.eulerAngles.y;
         m_Movement = Quaternion.AngleAxis(cameraAngle, Vector3.up) * m_Movement;
 
-
         m_CharacterMovement.Move(m_Movement * Time.deltaTime);
+
+        //Animation
+        if (m_Movement.x == 0 && m_Movement.z == 0)
+            m_animator.ChangeAnimationState(characterState.character_idle);
+        else if (m_Movement.x < 0 || m_Movement.z > 0)
+            m_animator.ChangeAnimationState(characterState.character_walkLeft);
+        else
+            m_animator.ChangeAnimationState(characterState.character_walkRight);
     }
 
     //read input
