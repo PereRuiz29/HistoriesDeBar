@@ -5,7 +5,6 @@ using UnityEngine.EventSystems;
 using DG.Tweening;
 
 
-
 public class Slot : MonoBehaviour, IDropHandler
 {
 
@@ -25,11 +24,10 @@ public class Slot : MonoBehaviour, IDropHandler
         if (haveObject || drag.canBeDropInSlot == false)
             return;
 
-        drag.EnterSlot(this); //Pass the object self to notify is in slot
+        drag.EnterSlot(this); //Pass the object this slot to notify is in slot
         haveObject = true;
 
-        drag.isDropedOnSlot = true;
-        eventData.pointerDrag.transform.DOMove(SlotPoint.position, 0.2f);
+        eventData.pointerDrag.transform.DOMove(SlotPoint.position + new Vector3(0, drag.heightOffset, 0), 0.2f);
     }
 
     public void EmptySlot()

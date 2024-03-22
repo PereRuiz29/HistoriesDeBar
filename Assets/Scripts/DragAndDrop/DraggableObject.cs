@@ -9,12 +9,11 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 {
     private TargetJoint2D m_TargetJoint;
 
-
     private CanvasGroup m_canvasGroup;
     private RectTransform m_CanvasTransform;
     private RectTransform m_ObjectTransform;
 
-    [HideInInspector] public bool isDropedOnSlot;
+    [SerializeField] private float barHeight = -500;
     [SerializeField] private bool m_canBeDropInSlot;
 
     private Slot m_slot;
@@ -35,7 +34,7 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
         m_slot = null;
 
-        m_heightOffset = m_CanvasTransform.rect.height * m_CanvasTransform.localScale.y / 2;
+        m_heightOffset = m_ObjectTransform.rect.height * m_ObjectTransform.localScale.y / 2;
     }
 
     public void OnBeginDrag(PointerEventData eventData)
@@ -44,8 +43,6 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         if (m_slot != null)
             m_slot.EmptySlot();
         m_slot = null;
-
-        isDropedOnSlot = false;
 
         //To be able to be dropped in slot
         m_canvasGroup.blocksRaycasts = false;
@@ -61,12 +58,12 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     {
         m_canvasGroup.blocksRaycasts = true;
 
-        //If the object is move in a slot, don't move it to the bar 
-        if (isDropedOnSlot)
+        //If the object is in a slot, don't move it to the bar 
+        if (m_slot != null)
             return;
 
         //Move the object to the bar
-        transform.DOLocalMoveY(-500 + m_ObjectTransform.rect.height / 2 * transform.localScale.x, 0.35f).SetEase(Ease.InOutCubic);
+        transform.DOLocalMoveY(barHeight + m_heightOffset, 0.35f).SetEase(Ease.InOutCubic);
 
         float width = m_CanvasTransform.rect.width;
         //If move the object outside the canvas move it backs in
@@ -81,5 +78,4 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     {
         m_slot = slot;
     }
-
 }
