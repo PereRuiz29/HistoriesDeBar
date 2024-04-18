@@ -16,6 +16,7 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     [SerializeField] private float barHeight = -500;
     [SerializeField] private bool m_canBeDropInSlot;
 
+
     private Slot m_slot;
 
     //The half of the height of the object
@@ -24,7 +25,8 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     public bool canBeDropInSlot => m_canBeDropInSlot;
     public float heightOffset => m_heightOffset;
 
-    private void Start()
+
+    protected virtual void Start()
     {
         m_canvasGroup = GetComponent<CanvasGroup>();
         m_TargetJoint = GetComponent<TargetJoint2D>();
@@ -52,6 +54,7 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     {
         //The target joint follow the cursor a bit of smooth
         m_TargetJoint.target = Input.mousePosition;
+        //transform.position = Input.mousePosition;
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -78,4 +81,5 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     {
         m_slot = slot;
     }
+
 }

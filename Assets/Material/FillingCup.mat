@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-3368030362187555592
+--- !u!114 &-3162969539327725324
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
@@ -20,8 +20,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: SkinMat
-  m_Shader: {fileID: -6465566751694194690, guid: be05e45337f007c459d238232cd86d0c, type: 3}
+  m_Name: FillingCup
+  m_Shader: {fileID: -6465566751694194690, guid: fe2bb5fd6aa28c844b51c4b367187170, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -37,15 +37,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 0fdcefdef3b4b6344a5cf34a5ce5f685, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _NormalMap:
-        m_Texture: {fileID: 2800000, guid: 91b7cea8a853e3742a57bada72c0a4b8, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _SkinTex:
-        m_Texture: {fileID: 2800000, guid: 5fbab3c333ae4cd4092e136e8445493b, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -62,7 +54,13 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _FillAmount: -60
+    - _Float: 0.5
     - _QueueControl: 0
     - _QueueOffset: 0
-    m_Colors: []
+    - _Wobble: 0
+    - _Wooble: 0
+    m_Colors:
+    - _Color1: {r: 0.9528302, g: 0.9462605, b: 0.9384479, a: 1}
+    - _Color2: {r: 0.2358491, g: 0.192362, b: 0.1388395, a: 1}
   m_BuildTextureStacks: []
