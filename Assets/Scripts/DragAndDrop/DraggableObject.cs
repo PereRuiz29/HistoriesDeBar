@@ -16,7 +16,6 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     [SerializeField] private float barHeight = -500;
     [SerializeField] private bool m_canBeDropInSlot;
 
-    [SerializeField] private GameObject m_fillGameObject;
 
     private Slot m_slot;
 
@@ -27,15 +26,7 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     public float heightOffset => m_heightOffset;
 
 
-
-    private float totalParticles;
-    private float waterParticles;
-    private float coffeParticles;
-    private float whiskyParticles;
-
-
-
-    private void Start()
+    protected virtual void Start()
     {
         m_canvasGroup = GetComponent<CanvasGroup>();
         m_TargetJoint = GetComponent<TargetJoint2D>();
@@ -46,8 +37,6 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         m_slot = null;
 
         m_heightOffset = m_ObjectTransform.rect.height * m_ObjectTransform.localScale.y / 2;
-
-        totalParticles = waterParticles = coffeParticles = whiskyParticles = 0;
     }
 
     public void OnBeginDrag(PointerEventData eventData)
@@ -93,36 +82,4 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         m_slot = slot;
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.tag == "Fluids")
-        {
-            fluidType type = collision.gameObject.GetComponent<FluidParticle>().fluidType;
-
-            if (type == fluidType.water)
-                waterParticles++;
-            else if (type == fluidType.coffe)
-                coffeParticles++;
-            else if (type == fluidType.wisky)
-                whiskyParticles++;
-
-            totalParticles++;
-            Destroy(collision.gameObject);
-
-            m_fillGameObject.GetComponent<SpriteRenderer>().material.SetFloat("_FillAmount", totalParticles-60);
-            m_fillGameObject.GetComponent<SpriteRenderer>().material.SetFloat("_Float", coffeParticles / (coffeParticles + waterParticles));
-
-            Debug.Log(coffeParticles / (coffeParticles + waterParticles));
-
-            if (totalParticles > 120)
-            {
-                totalParticles = 0;
-                waterParticles = 0;
-                coffeParticles = 0;
-                whiskyParticles = 0;
-            }
-
-            //Debug.Log("Water: " + waterParticles + "  Coffe: " + coffeParticles + "  Whisky: " + whiskyParticles + "  total: " + totalParticles);
-        }
-    }
 }
