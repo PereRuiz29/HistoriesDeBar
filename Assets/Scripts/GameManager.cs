@@ -15,7 +15,8 @@ public class GameManager : MonoBehaviour
     public enum state
     {
         player,
-        dialogue
+        dialogue,
+        dragAndDrop
     }
 
     private state m_CurrentState;
@@ -36,7 +37,6 @@ public class GameManager : MonoBehaviour
     {
         return instance;
     }
-
 
     public void EnterDialogue()
     {
