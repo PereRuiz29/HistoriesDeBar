@@ -20,7 +20,7 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     private Slot m_slot;
 
     private bool m_isDragging;
-    private bool m_isRotating;
+    protected bool isRotating;
 
 
     private Vector3 m_initialRotationPosition;
@@ -43,7 +43,7 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
         m_slot = null;
         m_isDragging = false;
-        m_isRotating = false;
+        isRotating = false;
 
         m_heightOffset = m_ObjectTransform.rect.height * m_ObjectTransform.localScale.y / 2;
     }
@@ -64,19 +64,10 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     public void OnDrag(PointerEventData eventData)
     {
         //The target joint follow the cursor a bit of smooth
-
-        if (!m_isRotating)
+        if (!isRotating)
             m_TargetJoint.target = Input.mousePosition;
         else
-        {
-            Vector3 a = Input.mousePosition - m_initialRotationPosition - m_positionOffSet;
-            float rotation = Vector3.SignedAngle(Vector3.up, a, Vector3.forward);
-
-            transform.DOLocalRotate(new Vector3(0,0, rotation), 0.2f);
-        }
-
-
-        //transform.position = Input.mousePosition;
+            Rotate();
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -84,7 +75,7 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         m_canvasGroup.blocksRaycasts = true;
 
         m_isDragging = false;
-        m_isRotating = false;
+        isRotating = false;
 
         //If the object is in a slot, don't move it to the bar 
         if (m_slot != null)
@@ -101,7 +92,11 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             transform.DOLocalMoveX(width / 2.2f, 0.35f).SetEase(Ease.OutCubic);
         else if (transform.localPosition.x < -width / 2.2)
             transform.DOLocalMoveX(-width / 2.2f, 0.35f).SetEase(Ease.OutCubic);
+
+        EndRotate();
     }
+
+    #region Rotation
 
     public void OnRotate(InputAction.CallbackContext context)
     {
@@ -111,17 +106,36 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         if (context.started)
         {
             m_initialRotationPosition = Input.mousePosition;
-            m_isRotating = true;
+            isRotating = true;
 
         }
         else if (context.canceled)
         {
-
-            m_isRotating = false;
+            isRotating = false;
             transform.DOLocalRotate(Vector3.zero, 0.2f).SetEase(Ease.InOutCubic);
             m_TargetJoint.target = Input.mousePosition;
+
+            EndRotate();
         }
     }
+
+
+    protected virtual void Rotate()
+    {
+        Vector3 a = Input.mousePosition - m_initialRotationPosition - m_positionOffSet;
+        float rotation = Vector3.SignedAngle(Vector3.up, a, Vector3.forward);
+
+        transform.DOLocalRotate(new Vector3(0, 0, rotation), 0.2f);
+    }
+
+    //Called when rotation or dragging stops
+    protected virtual void EndRotate()
+    {
+
+    }
+
+    #endregion
+
 
     //Save the slot reference
     public void EnterSlot(Slot slot)

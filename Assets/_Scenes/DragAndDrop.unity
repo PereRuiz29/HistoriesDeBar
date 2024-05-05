@@ -1716,7 +1716,7 @@ GameObject:
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1441284187
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1748,11 +1748,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57cfb5e45b724954c9027ee9fe910787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fluidParticle: {fileID: 6362462851116552932, guid: 122e37ecf5948844dbf005d8bae48b44, type: 3}
-  particlesContainer: {fileID: 593258667}
-  active: 1
-  randomPosition: 0
-  rate: 40
+  m_fluidParticle: {fileID: 0}
+  m_particlesContainer: {fileID: 0}
+  m_rate: 1
+  m_randomPosition: 0
 --- !u!1 &1557930554
 GameObject:
   m_ObjectHideFlags: 0
@@ -1769,7 +1768,7 @@ GameObject:
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1557930555
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1801,11 +1800,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57cfb5e45b724954c9027ee9fe910787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fluidParticle: {fileID: 2858382922768709099, guid: 032f06d2a784cf748b34b7f96a45b86a, type: 3}
-  particlesContainer: {fileID: 593258667}
-  active: 1
-  randomPosition: 0
-  rate: 40
+  m_fluidParticle: {fileID: 0}
+  m_particlesContainer: {fileID: 0}
+  m_rate: 1
+  m_randomPosition: 0
 --- !u!1 &1852529818
 GameObject:
   m_ObjectHideFlags: 0
@@ -2244,7 +2242,7 @@ GameObject:
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2030486731
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2276,11 +2274,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57cfb5e45b724954c9027ee9fe910787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fluidParticle: {fileID: 3099794677126275063, guid: b1003881540b2a94ab93cf4be3373a2d, type: 3}
-  particlesContainer: {fileID: 593258667}
-  active: 1
-  randomPosition: 0
-  rate: 40
+  m_fluidParticle: {fileID: 0}
+  m_particlesContainer: {fileID: 0}
+  m_rate: 1
+  m_randomPosition: 0
 --- !u!1001 &1317000255636181884
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2289,6 +2286,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 515416667}
     m_Modifications:
+    - target: {fileID: 1319344382601208230, guid: cb2a8a21fb9609743902949ad0fc0a08, type: 3}
+      propertyPath: rate
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1319344382601208230, guid: cb2a8a21fb9609743902949ad0fc0a08, type: 3}
+      propertyPath: m_rate
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1319344382601208230, guid: cb2a8a21fb9609743902949ad0fc0a08, type: 3}
+      propertyPath: m_fluidParticle
+      value: 
+      objectReference: {fileID: 3099794677126275063, guid: b1003881540b2a94ab93cf4be3373a2d, type: 3}
+    - target: {fileID: 1319344382601208230, guid: cb2a8a21fb9609743902949ad0fc0a08, type: 3}
+      propertyPath: particlesContainer
+      value: 
+      objectReference: {fileID: 593258667}
+    - target: {fileID: 1319344382601208230, guid: cb2a8a21fb9609743902949ad0fc0a08, type: 3}
+      propertyPath: m_particlesContainer
+      value: 
+      objectReference: {fileID: 593258667}
     - target: {fileID: 3202759325656046242, guid: cb2a8a21fb9609743902949ad0fc0a08, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

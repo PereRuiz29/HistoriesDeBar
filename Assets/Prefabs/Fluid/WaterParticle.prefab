@@ -9,6 +9,14 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 2389626846131261835, guid: ad3c33c8bfa74564da6d44f0e527a60e, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2389626846131261835, guid: ad3c33c8bfa74564da6d44f0e527a60e, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2389626846131261835, guid: ad3c33c8bfa74564da6d44f0e527a60e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -50,7 +58,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7490273686071785181, guid: ad3c33c8bfa74564da6d44f0e527a60e, type: 3}
       propertyPath: m_Name
-      value: FluidParticle
+      value: WaterParticle
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

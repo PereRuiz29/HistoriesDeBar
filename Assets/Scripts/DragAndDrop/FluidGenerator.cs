@@ -4,37 +4,79 @@ using UnityEngine;
 
 public class FluitGenerator : MonoBehaviour
 {
+    [SerializeField] private GameObject m_fluidParticle;
+    [SerializeField] private GameObject m_particlesContainer;
 
-    [SerializeField] private GameObject fluidParticle;
-    [SerializeField] private GameObject particlesContainer;
-
-    [SerializeField] private bool active;
-    [SerializeField] private bool randomPosition;
     [Tooltip("Particles per second")]
-    [SerializeField] private float rate;
+    [SerializeField] private float m_rate = 1;
+
+    [Header("Initial Velocity")]
+    [Tooltip("It gives an initial speed depending on the rotation it has, Ex: As more tilted a bottle is, the faster the fluid comes out")]
+    [SerializeField] private bool m_applyVelocity;
+    [Range(0.5f, 2.5f)]
+    [SerializeField] private float m_velocityMultiplier;
+
+    [Header("Randomess")]
+    [SerializeField] private bool m_randomPosition;
+    [Tooltip("Shift position a random value from 0 to the given position")]
+    [SerializeField] private float m_randomValue;
 
 
-    // Start is called before the first frame update
-    IEnumerator Start()
+    private Coroutine m_fluidGenerator;
+
+    //Start Generating fluid particles
+    public void StartFluid()
+    {
+        if (m_fluidGenerator != null)
+            return;
+
+        m_fluidGenerator = StartCoroutine(GenerateFluid());
+    }
+
+    //Stop Generating fluid partiques
+    public void StopFluid()
+    {
+        if (m_fluidGenerator == null)
+            return;
+            
+        StopCoroutine(m_fluidGenerator);
+        m_fluidGenerator = null;
+    }
+
+    //Generate fluid particles at given rate
+    private IEnumerator GenerateFluid()
     {
         while (true)
         {
-            if (active & rate > 0)
+            GameObject particle;
+            if (m_randomPosition)
             {
-                if (randomPosition)
-                {
-                    Vector3 randPosition = new Vector3(Random.Range(0, 20), Random.Range(0, 20), 0);
-                    GameObject particle = Instantiate(fluidParticle, transform.position + randPosition, transform.rotation, particlesContainer.transform);
-                }
-                else
-                {
-                    GameObject particle = Instantiate(fluidParticle, transform.position, transform.rotation, particlesContainer.transform);
-                }
-
-                yield return new WaitForSeconds(1f / rate);
+                Vector3 randPosition = new Vector3(Random.Range(0, m_randomValue), Random.Range(0, m_randomValue) , 0);
+                particle = Instantiate(m_fluidParticle, transform.position + randPosition, transform.rotation, m_particlesContainer.transform);
             }
             else
-                yield return new WaitForSeconds(1f);
+                particle = Instantiate(m_fluidParticle, transform.position, transform.rotation, m_particlesContainer.transform);
+            
+            //Apply Velocity to the fluid particle 
+            if (m_applyVelocity)
+            {
+                //Add force to the particle
+                //The force apply depend of the angle 
+                float velocity = ((Mathf.Abs(transform.eulerAngles.z - 180) * -1) + 180) * 0.01f * m_velocityMultiplier;
+                //Turn the angle of rotation of the bottle into a vector2
+                Vector2 direction = DegreeToVector2(transform.eulerAngles.z + 90);
+                particle.GetComponent<Rigidbody2D>().AddForce(direction * velocity);
+            }
+
+            yield return new WaitForSeconds(1f / m_rate);
         }
+    }
+
+
+    //Return a Vector2 of an angle
+    private Vector2 DegreeToVector2(float angle)
+    {
+        angle *= Mathf.Deg2Rad;
+        return new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
     }
 }

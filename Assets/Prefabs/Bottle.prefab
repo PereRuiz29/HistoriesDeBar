@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3202759325656046242}
   - component: {fileID: 9123458694935434714}
-  - component: {fileID: 8483567080501862928}
+  - component: {fileID: 7366865599292336549}
   - component: {fileID: 4846970722438759942}
   - component: {fileID: 4271473945034073585}
   - component: {fileID: 2718386971465894475}
@@ -34,7 +34,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 10}
   m_ConstrainProportionsScale: 1
-  m_Children: []
+  m_Children:
+  - {fileID: 4835244954787941172}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -50,7 +51,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6061033749212543400}
   m_CullTransparentMesh: 1
---- !u!114 &8483567080501862928
+--- !u!114 &7366865599292336549
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -59,7 +60,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6061033749212543400}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0db6d69ff2efb4d4bbce90f508ed6838, type: 3}
+  m_Script: {fileID: 11500000, guid: 8ce9ff461f1ba6b4c900fa9a6a9db782, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   barHeight: -500
@@ -198,7 +199,7 @@ MonoBehaviour:
     m_ActionName: Dialogue/Submit[/Keyboard/space,/Keyboard/e]
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8483567080501862928}
+      - m_Target: {fileID: 7366865599292336549}
         m_TargetAssemblyTypeName: DraggableObject, Assembly-CSharp
         m_MethodName: OnRotate
         m_Mode: 0
@@ -217,3 +218,58 @@ MonoBehaviour:
   m_DefaultActionMap: DragAndDrop
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!1 &8614660642155477051
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4835244954787941172}
+  - component: {fileID: 1319344382601208230}
+  m_Layer: 4
+  m_Name: FluidGenerator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &4835244954787941172
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8614660642155477051}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3202759325656046242}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 20}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1319344382601208230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8614660642155477051}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57cfb5e45b724954c9027ee9fe910787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_fluidParticle: {fileID: 3099794677126275063, guid: b1003881540b2a94ab93cf4be3373a2d, type: 3}
+  m_particlesContainer: {fileID: 0}
+  m_rate: 100
+  m_applyVelocity: 1
+  m_velocityMultiplier: 1
+  m_randomPosition: 0
+  m_randomValue: 15
