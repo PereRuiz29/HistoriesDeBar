@@ -4,18 +4,20 @@ using UnityEngine;
 
 public class DraggableBottle : DraggableObject
 {
-    private FluitGenerator m_generator;
+    private FluidGenerator m_generator;
+
+    [SerializeField] private float m_generateAngle;
 
     private void Awake()
     {
-        m_generator = GetComponentInChildren<FluitGenerator>();
+        m_generator = GetComponentInChildren<FluidGenerator>();
     }
 
     protected override void Rotate()
     {
         base.Rotate();
 
-        if (isRotating && transform.eulerAngles.z > 45 && transform.eulerAngles.z < 315)
+        if (isRotating && transform.eulerAngles.z > m_generateAngle && transform.eulerAngles.z < (360 - m_generateAngle))
             m_generator.StartFluid();
         else
             m_generator.StopFluid();

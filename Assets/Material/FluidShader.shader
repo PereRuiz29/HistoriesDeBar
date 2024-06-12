@@ -23,9 +23,14 @@ Shader "Unlit/FluidShader"
             "ShaderGraphShader" = "true"
             "ShaderGraphTargetId" = "UniversalUnlitSubTarget"
         }
+
         Pass
         {
             Name "Universal Forward"
+            Tags
+            {
+            // LightMode: <None>
+        }
 
         // Render State
         Cull Off
@@ -255,18 +260,19 @@ Shader "Unlit/FluidShader"
                 Out = UV * Tiling + Offset;
             }
 
-            void Unity_Blend_Overlay_float4(float4 Base, float4 Blend, out float4 Out, float Opacity)
+            void Unity_Add_float4(float4 A, float4 B, out float4 Out)
             {
-                float4 result1 = 1.0 - 2.0 * (1.0 - Base) * (1.0 - Blend);
-                float4 result2 = 2.0 * Base * Blend;
-                float4 zeroOrOne = step(Base, 0.5);
-                Out = result2 * zeroOrOne + (1 - zeroOrOne) * result1;
-                Out = lerp(Base, Out, Opacity);
+                Out = A + B;
             }
 
             void Unity_Negate_float(float In, out float Out)
             {
                 Out = -1 * In;
+            }
+
+            void Unity_Divide_float4(float4 A, float4 B, out float4 Out)
+            {
+                Out = A / B;
             }
 
             void Unity_Step_float(float Edge, float In, out float Out)
@@ -339,8 +345,8 @@ Shader "Unlit/FluidShader"
                 float _SampleTexture2D_981483030cd845fbb920bb32147be48e_G_5_Float = _SampleTexture2D_981483030cd845fbb920bb32147be48e_RGBA_0_Vector4.g;
                 float _SampleTexture2D_981483030cd845fbb920bb32147be48e_B_6_Float = _SampleTexture2D_981483030cd845fbb920bb32147be48e_RGBA_0_Vector4.b;
                 float _SampleTexture2D_981483030cd845fbb920bb32147be48e_A_7_Float = _SampleTexture2D_981483030cd845fbb920bb32147be48e_RGBA_0_Vector4.a;
-                float4 _Blend_9cbb5f3d44e84e0389d84f425aa97dfb_Out_2_Vector4;
-                Unity_Blend_Overlay_float4(_SampleTexture2D_188aec95cb6045b39071d07d5023f2e2_RGBA_0_Vector4, _SampleTexture2D_981483030cd845fbb920bb32147be48e_RGBA_0_Vector4, _Blend_9cbb5f3d44e84e0389d84f425aa97dfb_Out_2_Vector4, 0.5);
+                float4 _Add_ca78ed20ea1d4860a5bf21342e43374f_Out_2_Vector4;
+                Unity_Add_float4(_SampleTexture2D_188aec95cb6045b39071d07d5023f2e2_RGBA_0_Vector4, _SampleTexture2D_981483030cd845fbb920bb32147be48e_RGBA_0_Vector4, _Add_ca78ed20ea1d4860a5bf21342e43374f_Out_2_Vector4);
                 UnityTexture2D _Property_34013744208c49b38249b396c0f810a4_Out_0_Texture2D = UnityBuildTexture2DStructNoScale(_MainTex);
                 float4 _Combine_143b2529a55c4d1c874b1ab344e8b5d1_RGBA_4_Vector4;
                 float3 _Combine_143b2529a55c4d1c874b1ab344e8b5d1_RGB_5_Vector3;
@@ -363,10 +369,10 @@ Shader "Unlit/FluidShader"
                 float _SampleTexture2D_95e6540625044b708f62b2ebb415f4c7_G_5_Float = _SampleTexture2D_95e6540625044b708f62b2ebb415f4c7_RGBA_0_Vector4.g;
                 float _SampleTexture2D_95e6540625044b708f62b2ebb415f4c7_B_6_Float = _SampleTexture2D_95e6540625044b708f62b2ebb415f4c7_RGBA_0_Vector4.b;
                 float _SampleTexture2D_95e6540625044b708f62b2ebb415f4c7_A_7_Float = _SampleTexture2D_95e6540625044b708f62b2ebb415f4c7_RGBA_0_Vector4.a;
-                float4 _Blend_c664029e2af741a38ed2829f9a0e0c4a_Out_2_Vector4;
-                Unity_Blend_Overlay_float4(_SampleTexture2D_07272b0b7c134c28a01e9ccc2196f318_RGBA_0_Vector4, _SampleTexture2D_95e6540625044b708f62b2ebb415f4c7_RGBA_0_Vector4, _Blend_c664029e2af741a38ed2829f9a0e0c4a_Out_2_Vector4, 0.5);
-                float4 _Blend_756cf7c008be4bec91844fe33bd148d9_Out_2_Vector4;
-                Unity_Blend_Overlay_float4(_Blend_9cbb5f3d44e84e0389d84f425aa97dfb_Out_2_Vector4, _Blend_c664029e2af741a38ed2829f9a0e0c4a_Out_2_Vector4, _Blend_756cf7c008be4bec91844fe33bd148d9_Out_2_Vector4, 0.5);
+                float4 _Add_e7700aa9deaa47379fa7257806f4feb4_Out_2_Vector4;
+                Unity_Add_float4(_SampleTexture2D_07272b0b7c134c28a01e9ccc2196f318_RGBA_0_Vector4, _SampleTexture2D_95e6540625044b708f62b2ebb415f4c7_RGBA_0_Vector4, _Add_e7700aa9deaa47379fa7257806f4feb4_Out_2_Vector4);
+                float4 _Add_a516b3c81824490aa17a86228d13750d_Out_2_Vector4;
+                Unity_Add_float4(_Add_ca78ed20ea1d4860a5bf21342e43374f_Out_2_Vector4, _Add_e7700aa9deaa47379fa7257806f4feb4_Out_2_Vector4, _Add_a516b3c81824490aa17a86228d13750d_Out_2_Vector4);
                 UnityTexture2D _Property_99b3f6c2258f45a0a6acc31b363dd2fd_Out_0_Texture2D = UnityBuildTexture2DStructNoScale(_MainTex);
                 float _Property_6de35be7c9d4496baffdca0d153d29f5_Out_0_Float = _BlurAmount;
                 float _Multiply_5bd99b465c374f66a7cbe38cf9056c43_Out_2_Float;
@@ -394,8 +400,8 @@ Shader "Unlit/FluidShader"
                 float _SampleTexture2D_443075eab48b4a5488a75432ee84dcdf_G_5_Float = _SampleTexture2D_443075eab48b4a5488a75432ee84dcdf_RGBA_0_Vector4.g;
                 float _SampleTexture2D_443075eab48b4a5488a75432ee84dcdf_B_6_Float = _SampleTexture2D_443075eab48b4a5488a75432ee84dcdf_RGBA_0_Vector4.b;
                 float _SampleTexture2D_443075eab48b4a5488a75432ee84dcdf_A_7_Float = _SampleTexture2D_443075eab48b4a5488a75432ee84dcdf_RGBA_0_Vector4.a;
-                float4 _Blend_5b32c148cfef4334930e4a66b3954387_Out_2_Vector4;
-                Unity_Blend_Overlay_float4(_SampleTexture2D_ffdc9499018d4b158cfeffc4ff4f0672_RGBA_0_Vector4, _SampleTexture2D_443075eab48b4a5488a75432ee84dcdf_RGBA_0_Vector4, _Blend_5b32c148cfef4334930e4a66b3954387_Out_2_Vector4, 0.5);
+                float4 _Add_a3bf4724085348c5924f3e36ef9be040_Out_2_Vector4;
+                Unity_Add_float4(_SampleTexture2D_ffdc9499018d4b158cfeffc4ff4f0672_RGBA_0_Vector4, _SampleTexture2D_443075eab48b4a5488a75432ee84dcdf_RGBA_0_Vector4, _Add_a3bf4724085348c5924f3e36ef9be040_Out_2_Vector4);
                 UnityTexture2D _Property_9a82e8d280224152b6894cfabfaeaa8c_Out_0_Texture2D = UnityBuildTexture2DStructNoScale(_MainTex);
                 float4 _Combine_7e453a5cb9f94974a9a2f63c5f69c34b_RGBA_4_Vector4;
                 float3 _Combine_7e453a5cb9f94974a9a2f63c5f69c34b_RGB_5_Vector3;
@@ -418,12 +424,15 @@ Shader "Unlit/FluidShader"
                 float _SampleTexture2D_5101d476fb634b99ae37b3f1eaa3eedf_G_5_Float = _SampleTexture2D_5101d476fb634b99ae37b3f1eaa3eedf_RGBA_0_Vector4.g;
                 float _SampleTexture2D_5101d476fb634b99ae37b3f1eaa3eedf_B_6_Float = _SampleTexture2D_5101d476fb634b99ae37b3f1eaa3eedf_RGBA_0_Vector4.b;
                 float _SampleTexture2D_5101d476fb634b99ae37b3f1eaa3eedf_A_7_Float = _SampleTexture2D_5101d476fb634b99ae37b3f1eaa3eedf_RGBA_0_Vector4.a;
-                float4 _Blend_c80c7b60794b472dad94f8d452fcae33_Out_2_Vector4;
-                Unity_Blend_Overlay_float4(_SampleTexture2D_2e8ca5c8264e4cd6acdc9c641fd99e15_RGBA_0_Vector4, _SampleTexture2D_5101d476fb634b99ae37b3f1eaa3eedf_RGBA_0_Vector4, _Blend_c80c7b60794b472dad94f8d452fcae33_Out_2_Vector4, 0.5);
-                float4 _Blend_232449ffe251451d99425629a3ec871b_Out_2_Vector4;
-                Unity_Blend_Overlay_float4(_Blend_5b32c148cfef4334930e4a66b3954387_Out_2_Vector4, _Blend_c80c7b60794b472dad94f8d452fcae33_Out_2_Vector4, _Blend_232449ffe251451d99425629a3ec871b_Out_2_Vector4, 0.5);
-                float4 _Blend_3c6c0e5d69ea49cd83a37c30ca38883f_Out_2_Vector4;
-                Unity_Blend_Overlay_float4(_Blend_756cf7c008be4bec91844fe33bd148d9_Out_2_Vector4, _Blend_232449ffe251451d99425629a3ec871b_Out_2_Vector4, _Blend_3c6c0e5d69ea49cd83a37c30ca38883f_Out_2_Vector4, 0.5);
+                float4 _Add_1347952107a84a4a8b48db2141b58eb8_Out_2_Vector4;
+                Unity_Add_float4(_SampleTexture2D_2e8ca5c8264e4cd6acdc9c641fd99e15_RGBA_0_Vector4, _SampleTexture2D_5101d476fb634b99ae37b3f1eaa3eedf_RGBA_0_Vector4, _Add_1347952107a84a4a8b48db2141b58eb8_Out_2_Vector4);
+                float4 _Add_85ac976465554fc59386db022e0508a3_Out_2_Vector4;
+                Unity_Add_float4(_Add_a3bf4724085348c5924f3e36ef9be040_Out_2_Vector4, _Add_1347952107a84a4a8b48db2141b58eb8_Out_2_Vector4, _Add_85ac976465554fc59386db022e0508a3_Out_2_Vector4);
+                float4 _Add_fa656b5728454b2e817981052c1dd29b_Out_2_Vector4;
+                Unity_Add_float4(_Add_a516b3c81824490aa17a86228d13750d_Out_2_Vector4, _Add_85ac976465554fc59386db022e0508a3_Out_2_Vector4, _Add_fa656b5728454b2e817981052c1dd29b_Out_2_Vector4);
+                float _Float_aaf94dfbae2540389f8558bcb7bc50d5_Out_0_Float = 8;
+                float4 _Divide_791c46a1d544489883f94e6a6fd5e383_Out_2_Vector4;
+                Unity_Divide_float4(_Add_fa656b5728454b2e817981052c1dd29b_Out_2_Vector4, (_Float_aaf94dfbae2540389f8558bcb7bc50d5_Out_0_Float.xxxx), _Divide_791c46a1d544489883f94e6a6fd5e383_Out_2_Vector4);
                 float _Property_9f865c38ba98411ebb6f51ac79634c3b_Out_0_Float = _Intensity;
                 UnityTexture2D _Property_3c79f4d078884c5e8f568e3bc69a8974_Out_0_Texture2D = UnityBuildTexture2DStructNoScale(_MainTex);
                 float4 _SampleTexture2D_1147efecd2ec4f83bc8d71ef314ebe8a_RGBA_0_Vector4 = SAMPLE_TEXTURE2D(_Property_3c79f4d078884c5e8f568e3bc69a8974_Out_0_Texture2D.tex, _Property_3c79f4d078884c5e8f568e3bc69a8974_Out_0_Texture2D.samplerstate, _Property_3c79f4d078884c5e8f568e3bc69a8974_Out_0_Texture2D.GetTransformedUV(IN.uv0.xy));
@@ -433,7 +442,7 @@ Shader "Unlit/FluidShader"
                 float _SampleTexture2D_1147efecd2ec4f83bc8d71ef314ebe8a_A_7_Float = _SampleTexture2D_1147efecd2ec4f83bc8d71ef314ebe8a_RGBA_0_Vector4.a;
                 float _Step_b7ff2c989afe467b9c74a324ae1959dd_Out_2_Float;
                 Unity_Step_float(_Property_9f865c38ba98411ebb6f51ac79634c3b_Out_0_Float, _SampleTexture2D_1147efecd2ec4f83bc8d71ef314ebe8a_A_7_Float, _Step_b7ff2c989afe467b9c74a324ae1959dd_Out_2_Float);
-                surface.BaseColor = (_Blend_3c6c0e5d69ea49cd83a37c30ca38883f_Out_2_Vector4.xyz);
+                surface.BaseColor = (_Divide_791c46a1d544489883f94e6a6fd5e383_Out_2_Vector4.xyz);
                 surface.Alpha = _Step_b7ff2c989afe467b9c74a324ae1959dd_Out_2_Float;
                 surface.AlphaClipThreshold = 0.09;
                 return surface;
