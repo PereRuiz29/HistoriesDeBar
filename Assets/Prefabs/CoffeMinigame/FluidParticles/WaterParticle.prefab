@@ -56,6 +56,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6631131572690395915, guid: ad3c33c8bfa74564da6d44f0e527a60e, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 60c7735016f319843b59876ff0de9bd8, type: 2}
     - target: {fileID: 7490273686071785181, guid: ad3c33c8bfa74564da6d44f0e527a60e, type: 3}
       propertyPath: m_Name
       value: WaterParticle

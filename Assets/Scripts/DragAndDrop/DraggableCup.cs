@@ -3,133 +3,108 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using TMPro;
-
-[CustomEditor(typeof(DraggableCup))]
-public class InspectorEditor : Editor
-{
-    public override void OnInspectorGUI()
-    {
-        base.OnInspectorGUI();
-        var script = (DraggableCup)target;
-
-        if (script.m_changeSpillRate)
-        {
-            script.minEmptyRate = EditorGUILayout.FloatField("Min Empty Rate", script.minEmptyRate);
-            script.maxEmptyRate = EditorGUILayout.FloatField("Max Empty Rate", script.maxEmptyRate);
-            script.exponencialRateBase = EditorGUILayout.FloatField("Exponential Rate Base", script.exponencialRateBase);
-        }
-    }
-}
-
+using System.Linq;
+using UnityEngine.UI;
+using VInspector;
 
 public class DraggableCup : DraggableObject
 {
-
-
-
-    [Header("TEST TEXT")]
-    [SerializeField] private TextMeshProUGUI testText;
-    [SerializeField] private TextMeshProUGUI coffeTipeText;
-
-
     [Header("Cup")]
-    [SerializeField] private GameObject m_fillGameObject;
-
     [SerializeField] private float m_maxParticles = 500;
 
+    [Foldout("Fluid")]
+    [SerializeField] private SpriteRenderer m_fillGameObject;
     [SerializeField] private float m_height;
     [SerializeField] private float m_width;
+    [EndFoldout] 
 
-    [SerializeField] private FluidGenerator m_generatorLeft;
-    [SerializeField] private FluidGenerator m_generatorRight;
+    [Foldout("Spill")]
+    [SerializeField] private float minEmptyRate = 1;
+    [SerializeField] private float maxEmptyRate = 3;
+    [SerializeField] private float exponencialRateBase = 50;
+    [SerializeField] private FluidGenerator m_spillGeneratorLeft;
+    [SerializeField] private FluidGenerator m_spillGeneratorRight;
+    [EndFoldout]
 
-    private float percentFill;
+    [Foldout("Debug")]
+    [SerializeField] private SpriteRenderer colorTest;
+    [SerializeField] private TextMeshProUGUI testText;
+    [SerializeField] private TextMeshProUGUI coffeTypeText;
+    [EndFoldout]
 
-    private float totalParticles;
-    private float m_currentParticles;
+    //Particle Counter
+    private float m_percentFill;
+    private float m_spillColorValue;
+    private float m_totalParticles;
 
+    Dictionary<fluidType, float> m_particleCounter = new Dictionary<fluidType, float>()  {
+            { fluidType.whisky, 0 },
+            { fluidType.water, 0 },
+            { fluidType.coffe, 0 },
+            { fluidType.milk, 0 },
+        };
 
-    private float waterParticles;
-    private float coffeParticles;
-    private float whiskyParticles;
-
-    [Header("Spill")]
-    [SerializeField] public bool m_changeSpillRate;
-
-    [HideInInspector] public float minEmptyRate = 1;
-    [HideInInspector] public float maxEmptyRate = 10;
-    [HideInInspector] public float exponencialRateBase = 10;
-
-
-    public float currentParticles => m_currentParticles;
+    public float currentParticles => m_totalParticles;
 
     protected override void Start()
     {
         base.Start();
 
-        totalParticles = waterParticles = coffeParticles = whiskyParticles = 0;
         UpdateFluid();
     }
 
+    #region Fluid
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Fluids")
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Fluids"))
         {
             fluidType type = collision.gameObject.GetComponent<FluidParticle>().fluidType;
 
-            if (type == fluidType.water)
-                waterParticles++;
-            else if (type == fluidType.coffe)
-                coffeParticles++;
-            else if (type == fluidType.wisky)
-                whiskyParticles++;
+            m_particleCounter[type]++;
 
-            m_currentParticles++;
-            totalParticles++;
-            Destroy(collision.gameObject);
+
+            m_totalParticles++;
+
 
             UpdateFluid();
 
+            Destroy(collision.gameObject);
 
-            if (m_currentParticles > m_maxParticles)
+
+            if (m_totalParticles > m_maxParticles)
             {
-                m_currentParticles = 0;
-                totalParticles = 0;
-                waterParticles = 0;
-                coffeParticles = 0;
-                whiskyParticles = 0;
+                Spill();
+                //ClearParticleCounter();
             }
         }
+    }
+
+    //Set the counter for all particles to 0
+    private void ClearParticleCounter() {
+
+        foreach (fluidType type in m_particleCounter.Keys.ToList())
+        {
+            m_particleCounter[type] = 0;
+        }
+
+        m_totalParticles = 0;
     }
 
     //Update the fluid shader
     private void UpdateFluid()
     {
-        percentFill = m_currentParticles / m_maxParticles;
-        m_fillGameObject.GetComponent<SpriteRenderer>().material.SetFloat("_FillAmount", percentFill);
-        m_fillGameObject.GetComponent<SpriteRenderer>().material.SetFloat("_ColorValue", (coffeParticles + whiskyParticles) / currentParticles);
+        m_percentFill = m_totalParticles / m_maxParticles;
+        m_spillColorValue = (m_particleCounter[fluidType.coffe] + m_particleCounter[fluidType.whisky]) / currentParticles;
+
+        m_fillGameObject.material.SetFloat("_FillAmount", m_percentFill);
+        m_fillGameObject.material.SetFloat("_ColorValue", m_spillColorValue);
         ShowStats();
     }
 
+    #endregion
 
-    public void Empty()
-    {
-        InvokeRepeating("iEmpty", 0f, 1 / 50);
-    }
-
-    private void iEmpty()
-    {
-        float emptyRate = TransformValueInRange(Mathf.Abs(transform.rotation.z), minEmptyRate, maxEmptyRate);
-
-        waterParticles -= (waterParticles / m_currentParticles) * emptyRate;
-        coffeParticles -= (coffeParticles / m_currentParticles) * emptyRate;
-        whiskyParticles -= (whiskyParticles / m_currentParticles) * emptyRate;
-
-        m_currentParticles -= emptyRate;
-
-        UpdateFluid();
-        StopSpilling();
-    }
+    #region Rotate
 
     protected override void Rotate()
     {
@@ -143,23 +118,46 @@ public class DraggableCup : DraggableObject
         StopSpilling();
     }
 
+    #endregion
+
+    #region Spill
+    public void Empty()
+    {
+        InvokeRepeating("iEmpty", 0f, 1 / 50);
+    }
+
+    private void iEmpty()
+    {
+        float emptyRate = TransformValueInRange(Mathf.Abs(transform.rotation.z), minEmptyRate, maxEmptyRate, exponencialRateBase);
+
+        m_particleCounter[fluidType.water] -= (m_particleCounter[fluidType.water] / m_totalParticles) * emptyRate;
+        m_particleCounter[fluidType.coffe] -= (m_particleCounter[fluidType.coffe] / m_totalParticles) * emptyRate;
+        m_particleCounter[fluidType.whisky] -= (m_particleCounter[fluidType.whisky] / m_totalParticles) * emptyRate;
+
+        m_totalParticles -= emptyRate;
+
+        UpdateFluid();
+        StopSpilling();
+    }
+
+
     //Start spilling
     private void Spill()
     {
-        if (m_currentParticles < 1)
+        if (m_totalParticles < 1)
             return;
 
         float posFluid = FluidHeight();
 
-        if (m_generatorLeft.transform.position.y < posFluid)
+        if (m_spillGeneratorLeft.transform.position.y < posFluid)
         {
-            m_generatorLeft.StartFluid(this);
+            m_spillGeneratorLeft.StartFluid(this, m_spillColorValue);
             Empty();
         }
 
-        if (m_generatorRight.transform.position.y < posFluid)
+        if (m_spillGeneratorRight.transform.position.y < posFluid)
         {
-            m_generatorRight.StartFluid(this);
+            m_spillGeneratorRight.StartFluid(this, m_spillColorValue);
             Empty();
         }
     }
@@ -170,16 +168,16 @@ public class DraggableCup : DraggableObject
         float posFluid = FluidHeight();
 
         //Spill Left
-        if (m_currentParticles < 1 || m_generatorLeft.transform.position.y > posFluid)
+        if (m_totalParticles < 1 || m_spillGeneratorLeft.transform.position.y > posFluid)
         {
-            m_generatorLeft.StopFluid();
+            m_spillGeneratorLeft.StopFluid();
             CancelInvoke("iEmpty");
         }
 
         //Spill Right
-        if (m_currentParticles < 1 || m_generatorRight.transform.position.y > posFluid)
+        if (m_totalParticles < 1 || m_spillGeneratorRight.transform.position.y > posFluid)
         {
-            m_generatorRight.StopFluid();
+            m_spillGeneratorRight.StopFluid();
             CancelInvoke("iEmpty");
         }
     }
@@ -187,29 +185,35 @@ public class DraggableCup : DraggableObject
     //Return the height position of the cup fluid
     private float FluidHeight()
     {
-        return (-m_height * (1 - percentFill) * transform.localScale.y) + (m_height / 2 * transform.localScale.y) + transform.position.y;
+        return (-m_height * (1 - m_percentFill) * transform.localScale.y) + (m_height / 2 * transform.localScale.y) + transform.position.y;
     }
 
 
     //Transform a given value from a range of [0,1] to a range [𝑥,𝑦], exponientally
     private float TransformValueInRange(float value, float x , float y, float baseValue = 100)
     {
-        if (value <= 0 && value >= 1)
+        if (value < 0.01f) //Aproximally 0
+            return 0.5f;
+
+        if (value < 0 || value >= 1)
         {
             Debug.LogError("Value (" + value + ") should be between 0 and 1 inclusive.");
             return 0;
         }
 
         float expValue = (Mathf.Pow(baseValue, value) - 1) / (baseValue - 1);
-        return x + expValue * (y - x);
+        return (x + (expValue * (y - x)));
     }
 
+    #endregion
+
+    #region Coffe Type
 
     private string CoffeType()
     {
-        float whisky = whiskyParticles / currentParticles * 100;
-        float llet = waterParticles / currentParticles * 100;
-        float coffe = coffeParticles / currentParticles * 100;
+        float whisky = m_particleCounter[fluidType.whisky] / currentParticles * 100;
+        float llet = m_particleCounter[fluidType.water] / currentParticles * 100;
+        float coffe = m_particleCounter[fluidType.coffe] / currentParticles * 100;
 
 
         if (whisky > 95)
@@ -250,22 +254,31 @@ public class DraggableCup : DraggableObject
 
     }
 
+    #endregion
+
+    #region Test
+
     void OnDrawGizmos()
     {
         Gizmos.color = Color.blue;
-        Gizmos.DrawLine(transform.position + new Vector3(0, (- m_height * (1- percentFill) * transform.localScale.y) + (m_height/2 * transform.localScale.y), 0), transform.position + new Vector3(m_width / 2 * 10, (m_height * (1 - percentFill)) * 10, 0));
+        Gizmos.DrawLine(transform.position + new Vector3(0, (- m_height * (1- m_percentFill) * transform.localScale.y) + (m_height/2 * transform.localScale.y), 0), transform.position + new Vector3(m_width / 2 * 10, (m_height * (1 - m_percentFill)) * 10, 0));
     }
 
     private void ShowStats()
     {
         string stats = "Total: " + currentParticles / m_maxParticles * 100 + "% : " + currentParticles + ",\r\n"
-                    + "Water: " + waterParticles / currentParticles * 100 + "% : " + waterParticles + ",\r\n" 
-                    + "Coffe: " + coffeParticles / currentParticles * 100 + "% : " + coffeParticles + ",\r\n" 
-                    + "Whisky: " + whiskyParticles / currentParticles * 100 + "% : " + whiskyParticles;
+                    + "Water: " + m_particleCounter[fluidType.water] / currentParticles * 100 + "% : " + m_particleCounter[fluidType.water] + ",\r\n" 
+                    + "Coffe: " + m_particleCounter[fluidType.coffe] / currentParticles * 100 + "% : " + m_particleCounter[fluidType.coffe] + ",\r\n" 
+                    + "Whisky: " + m_particleCounter[fluidType.whisky] / currentParticles * 100 + "% : " + m_particleCounter[fluidType.whisky] + ",\r\n"
+                    + "Milk: " + m_particleCounter[fluidType.milk] / currentParticles * 100 + "% : " + m_particleCounter[fluidType.milk] + ",\r\n";
 
         testText.text = stats;
 
-        coffeTipeText.text = CoffeType();
+        colorTest.material.SetFloat("_ColorValue", m_spillColorValue);
+        colorTest.material.SetFloat("_FillAmount", 1);
+
+        coffeTypeText.text = CoffeType();
     }
 
+    #endregion
 }

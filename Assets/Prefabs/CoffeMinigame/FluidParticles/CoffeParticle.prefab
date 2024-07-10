@@ -50,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4376250206863409633, guid: ad3c33c8bfa74564da6d44f0e527a60e, type: 3}
       propertyPath: m_fluidType
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6631131572690395915, guid: ad3c33c8bfa74564da6d44f0e527a60e, type: 3}
       propertyPath: m_Materials.Array.data[0]

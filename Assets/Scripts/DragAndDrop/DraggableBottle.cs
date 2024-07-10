@@ -6,6 +6,8 @@ public class DraggableBottle : DraggableObject
 {
     private FluidGenerator m_generator;
 
+
+    [Header("Bottle")]
     [SerializeField] private float m_generateAngle;
 
     private void Awake()

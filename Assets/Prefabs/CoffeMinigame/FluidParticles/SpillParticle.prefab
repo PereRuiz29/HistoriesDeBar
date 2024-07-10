@@ -50,11 +50,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3496956534402145424, guid: ad3c33c8bfa74564da6d44f0e527a60e, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4376250206863409633, guid: ad3c33c8bfa74564da6d44f0e527a60e, type: 3}
+      propertyPath: m_fluidType
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6631131572690395915, guid: ad3c33c8bfa74564da6d44f0e527a60e, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 412ad5c9cdb7a5c45aedfb66c61def01, type: 2}
     - target: {fileID: 7490273686071785181, guid: ad3c33c8bfa74564da6d44f0e527a60e, type: 3}
       propertyPath: m_Name
       value: SpillParticle
+      objectReference: {fileID: 0}
+    - target: {fileID: 7490273686071785181, guid: ad3c33c8bfa74564da6d44f0e527a60e, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

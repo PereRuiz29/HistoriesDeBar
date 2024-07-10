@@ -63,10 +63,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ce9ff461f1ba6b4c900fa9a6a9db782, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  barHeight: -500
   m_canBeDropInSlot: 0
   m_canRotate: 1
   m_positionOffSet: {x: 0, y: -100, z: 0}
+  m_generateAngle: 50
 --- !u!114 &4846970722438759942
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -266,8 +266,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57cfb5e45b724954c9027ee9fe910787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_fluidParticle: {fileID: 3099794677126275063, guid: b1003881540b2a94ab93cf4be3373a2d, type: 3}
-  m_particlesContainer: {fileID: 0}
+  m_fluidType: 0
   m_rate: 100
   m_applyVelocity: 1
   m_velocityMultiplier: 1

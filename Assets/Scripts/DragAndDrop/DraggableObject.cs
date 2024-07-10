@@ -4,27 +4,27 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using DG.Tweening;
 using UnityEngine.InputSystem;
+using VInspector;
 
 public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    private TargetJoint2D m_TargetJoint;
+    [Header("Draggable Object")]
+    [SerializeField] private bool m_canBeDropInSlot;
+    [SerializeField] private bool m_canRotate;
+
+    [SerializeField] private Vector3 m_positionOffSet;
 
     private CanvasGroup m_canvasGroup;
     private RectTransform m_CanvasTransform;
     private RectTransform m_ObjectTransform;
 
-    [SerializeField] private float barHeight = -500;
-    [SerializeField] private bool m_canBeDropInSlot;
-    [SerializeField] private bool m_canRotate;
+    private Vector3 m_initialRotationPosition;
 
+    private TargetJoint2D m_TargetJoint;
     private Slot m_slot;
 
     private bool m_isDragging;
     protected bool isRotating;
-
-
-    private Vector3 m_initialRotationPosition;
-    [SerializeField] private Vector3 m_positionOffSet;
 
     //The half of the height of the object
     private float m_heightOffset;
@@ -39,7 +39,7 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         m_TargetJoint = GetComponent<TargetJoint2D>();
 
         m_ObjectTransform = GetComponent<RectTransform>();
-        m_CanvasTransform = transform.parent.GetComponent<RectTransform>();
+        m_CanvasTransform = CoffeMinigameController.instance.coffeCanvas;
 
         m_slot = null;
         m_isDragging = false;
@@ -48,6 +48,9 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         m_heightOffset = m_ObjectTransform.rect.height * m_ObjectTransform.localScale.y / 2;
     }
 
+    #region Drag
+
+    //When the object start dragging
     public void OnBeginDrag(PointerEventData eventData)
     {
         //Free the Slot its currently placed in
@@ -61,6 +64,7 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         m_canvasGroup.blocksRaycasts = false;
     }
 
+    //When its dragging, its called each time the object move
     public void OnDrag(PointerEventData eventData)
     {
         //The target joint follow the cursor a bit of smooth
@@ -70,6 +74,7 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             Rotate();
     }
 
+    //When release the object
     public void OnEndDrag(PointerEventData eventData)
     {
         m_canvasGroup.blocksRaycasts = true;
@@ -82,6 +87,7 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             return;
 
         //Move the object to the bar
+        float barHeight = CoffeMinigameController.instance.barHeight;
         transform.DOLocalMoveY(barHeight + m_heightOffset, 0.35f).SetEase(Ease.InOutCubic);
         transform.DOLocalRotate(Vector3.zero, 0.2f).SetEase(Ease.InOutCubic);
 
@@ -96,8 +102,11 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         EndRotate();
     }
 
+    #endregion
+
     #region Rotation
 
+    //Input call the object start rotating
     public void OnRotate(InputAction.CallbackContext context)
     {
         if (!m_canRotate || !m_isDragging)
@@ -119,7 +128,7 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         }
     }
 
-
+    //When rotare, its called each time the object move when rotating
     protected virtual void Rotate()
     {
         Vector3 a = Input.mousePosition - m_initialRotationPosition - m_positionOffSet;
@@ -136,6 +145,7 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     #endregion
 
+    #region Slot
 
     //Save the slot reference
     public void EnterSlot(Slot slot)
@@ -143,4 +153,5 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         m_slot = slot;
     }
 
+    #endregion
 }
