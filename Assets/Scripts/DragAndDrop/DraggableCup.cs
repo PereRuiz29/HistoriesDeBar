@@ -44,11 +44,16 @@ public class DraggableCup : DraggableObject
             { fluidType.milk, 0 },
         };
 
+    [SerializeField] private drinkType m_drinkType;
+
     public float currentParticles => m_totalParticles;
+    public drinkType drinkType  => m_drinkType;
 
     protected override void Start()
     {
         base.Start();
+
+        m_drinkType = drinkType.llarg;
 
         UpdateFluid();
     }
@@ -60,9 +65,7 @@ public class DraggableCup : DraggableObject
         if (collision.gameObject.layer == LayerMask.NameToLayer("Fluids"))
         {
             fluidType type = collision.gameObject.GetComponent<FluidParticle>().fluidType;
-
             m_particleCounter[type]++;
-
 
             m_totalParticles++;
 
@@ -70,7 +73,6 @@ public class DraggableCup : DraggableObject
             UpdateFluid();
 
             Destroy(collision.gameObject);
-
 
             if (m_totalParticles > m_maxParticles)
             {
@@ -99,6 +101,8 @@ public class DraggableCup : DraggableObject
 
         m_fillGameObject.material.SetFloat("_FillAmount", m_percentFill);
         m_fillGameObject.material.SetFloat("_ColorValue", m_spillColorValue);
+
+        m_drinkType = GetDrinkType();
         ShowStats();
     }
 
@@ -209,7 +213,7 @@ public class DraggableCup : DraggableObject
 
     #region Coffe Type
 
-    private string CoffeType()
+    private drinkType GetDrinkType()
     {
         float whisky = m_particleCounter[fluidType.whisky] / currentParticles * 100;
         float llet = m_particleCounter[fluidType.water] / currentParticles * 100;
@@ -217,40 +221,40 @@ public class DraggableCup : DraggableObject
 
 
         if (whisky > 95)
-            return "Whisky";
+            return drinkType.whisky;
 
         if (llet > 95)
-            return "LLet";
+            return drinkType.caffe;
 
         if (coffe > 95)
-            return "Caffe";
+            return drinkType.caffe;
 
 
         if (whisky < 5)
         {
             if (coffe < 40 && coffe > 20)
-                return "Curt";
+                return drinkType.curt;
 
             if (coffe > 40 && coffe < 60)
-                return "Tallat";
+                return drinkType.tallat;
 
             if (coffe < 80 && coffe > 60)
-                return "Llarg";
+                return drinkType.llarg;
         }
 
         if (llet < 5)
         {
             if (whisky > 15 && whisky < 25)
-                return "Cigalo";
+                return drinkType.cigalo;
 
             if (whisky > 25 && whisky < 40)
-                return "Cigalo ben carregat";
+                return drinkType.cigalocarregat;
         }
 
         if (coffe < 60 && coffe > 40 && whisky < 15 && whisky > 7)
-            return "Trifasic";
+            return drinkType.trifasic;
 
-        return "Puta merda";
+        return drinkType.putamerda;
 
     }
 
@@ -277,7 +281,7 @@ public class DraggableCup : DraggableObject
         colorTest.material.SetFloat("_ColorValue", m_spillColorValue);
         colorTest.material.SetFloat("_FillAmount", 1);
 
-        coffeTypeText.text = CoffeType();
+        coffeTypeText.text = GetDrinkType().ToString();
     }
 
     #endregion

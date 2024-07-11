@@ -6,11 +6,12 @@ TagManager:
   tags:
   - Interactable
   - Fluids
+  - Cup
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - DraggableObject
   - Water
   - UI
   - Fluids
