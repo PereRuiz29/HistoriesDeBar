@@ -10,6 +10,6 @@ public class DialogueTrigger : Interactable
 
     public override void Interact()
     {
-        DialogueManager.GetInstance().EnterDialogueMode(m_inkJSON);
+        GameManager.GetInstance().EnterDialogue(m_inkJSON);
     }
 }

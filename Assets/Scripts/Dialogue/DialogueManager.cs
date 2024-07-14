@@ -79,6 +79,7 @@ public class DialogueManager : MonoBehaviour
         m_DialogueAudio = GetComponent<DialogueAudio>();
         m_tween = GetComponent<DialogueTween>();
         m_dialoguePanel.GetComponent<CanvasGroup>().alpha = 0;
+        m_dialoguePanel.SetActive(false);
     }
 
     //open the dialogue box and handle the input
@@ -89,7 +90,8 @@ public class DialogueManager : MonoBehaviour
             return;
 
         //change action map
-        GameManager.GetInstance().EnterDialogue();
+        //GameManager.GetInstance().EnterDialogue();
+        m_dialoguePanel.SetActive(true);
 
         m_currentStory = new Story(inkJSON.text);
 
@@ -112,6 +114,7 @@ public class DialogueManager : MonoBehaviour
         yield return new WaitForSeconds(0.7f);
         m_dialogueText.text = "";
         m_canEnterDialogue = true;
+        m_dialoguePanel.SetActive(false);
     }
 
     #endregion

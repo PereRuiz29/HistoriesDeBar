@@ -196,14 +196,14 @@ public class DraggableCup : DraggableObject
     //Transform a given value from a range of [0,1] to a range [𝑥,𝑦], exponientally
     private float TransformValueInRange(float value, float x , float y, float baseValue = 100)
     {
-        if (value < 0.01f) //Aproximally 0
-            return 0.5f;
-
-        if (value < 0 || value >= 1)
+        if (value < 0 || value > 1)
         {
             Debug.LogError("Value (" + value + ") should be between 0 and 1 inclusive.");
             return 0;
         }
+
+        if (value < 0.01f) //Aproximally 0
+            return 0.5f;
 
         float expValue = (Mathf.Pow(baseValue, value) - 1) / (baseValue - 1);
         return (x + (expValue * (y - x)));
@@ -245,10 +245,10 @@ public class DraggableCup : DraggableObject
         if (llet < 5)
         {
             if (whisky > 15 && whisky < 25)
-                return drinkType.cigalo;
+                return drinkType.rebentat;
 
             if (whisky > 25 && whisky < 40)
-                return drinkType.cigalocarregat;
+                return drinkType.rebentatCarregat;
         }
 
         if (coffe < 60 && coffe > 40 && whisky < 15 && whisky > 7)

@@ -8,6 +8,11 @@ public class GameManager : MonoBehaviour
 
     private static GameManager instance;
 
+
+    DialogueManager m_dilogueManager;
+    CoffeMinigameManager m_coffeMinigameManager;
+
+
     [SerializeField] private PlayerInput m_playerInput;
     [SerializeField] private PlayerInput m_dialogueInput;
     [SerializeField] private PlayerInput m_pauseInput; //not inplemented
@@ -31,6 +36,9 @@ public class GameManager : MonoBehaviour
 
         m_playerInput.actions.FindActionMap("Player").Enable();
         m_dialogueInput.actions.FindActionMap("Dialogue").Disable();
+
+        m_dilogueManager = DialogueManager.GetInstance();
+        m_coffeMinigameManager = CoffeMinigameManager.GetInstance();
     }
 
     public static GameManager GetInstance()
@@ -38,24 +46,54 @@ public class GameManager : MonoBehaviour
         return instance;
     }
 
-    public void EnterDialogue()
+
+    #region Dialogue
+    public void EnterDialogue(TextAsset inkJSON)
     {
         m_playerInput.actions.FindActionMap("Player").Disable();
         m_dialogueInput.actions.FindActionMap("Dialogue").Enable();
+        m_dialogueInput.actions.FindActionMap("dragAndDrop").Disable();
+
+        m_dilogueManager.EnterDialogueMode(inkJSON); //Call the Dialogue Manager
     }
 
     public void ExitDialogue()
     {
         m_playerInput.actions.FindActionMap("Player").Enable();
         m_dialogueInput.actions.FindActionMap("Dialogue").Disable();
+        m_dialogueInput.actions.FindActionMap("dragAndDrop").Disable();
+
     }
+
+    #endregion
+
+    #region Coffe Minigame
+    public void EnterCoffeMinigame()
+    {
+        m_playerInput.actions.FindActionMap("Player").Disable();
+        m_dialogueInput.actions.FindActionMap("Dialogue").Disable();
+        m_dialogueInput.actions.FindActionMap("dragAndDrop").Enable();
+
+        m_coffeMinigameManager.OpenCoffeMinigame();
+    }
+
+    public void ExitCoffeMinigame()
+    {
+        m_playerInput.actions.FindActionMap("Player").Enable();
+        m_dialogueInput.actions.FindActionMap("Dialogue").Disable();
+        m_dialogueInput.actions.FindActionMap("dragAndDrop").Disable();
+
+        m_coffeMinigameManager.CloseCoffeMinigame();
+    }
+
+    #endregion
 
     public void PauseGame()
     {
         if(m_CurrentState == state.player)
             m_playerInput.actions.FindActionMap("Player").Disable();
         else if (m_CurrentState == state.dialogue)
-            m_dialogueInput.actions.FindActionMap("Player").Disable();
+            m_dialogueInput.actions.FindActionMap("Dialogue").Disable();
 
         m_pauseInput.actions.FindActionMap("Player").Enable();
     }
@@ -67,7 +105,7 @@ public class GameManager : MonoBehaviour
         if (m_CurrentState == state.player)
             m_playerInput.actions.FindActionMap("Player").Enable();
         else if (m_CurrentState == state.dialogue)
-            m_dialogueInput.actions.FindActionMap("Player").Enable();
+            m_dialogueInput.actions.FindActionMap("Dialogue").Enable();
 
     }
 }
