@@ -535,7 +535,7 @@ MonoBehaviour:
   m_canBeDropInSlot: 1
   m_canRotate: 1
   m_positionOffSet: {x: 0, y: -50, z: 0}
-  m_maxParticles: 500
+  m_maxParticles: 300
   m_fillGameObject: {fileID: 2596544672115636900}
   m_height: 12
   m_width: 9
@@ -547,6 +547,7 @@ MonoBehaviour:
   colorTest: {fileID: 2210267080538345786}
   testText: {fileID: 7822525896347090667}
   coffeTypeText: {fileID: 1454835752501912538}
+  m_drinkType: 0
 --- !u!114 &1006368906764628083
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -19,7 +19,8 @@ public class DialogueManager : MonoBehaviour
     private const string AUDIOPREDICT_TAG = "audioPredict";     // enable / disable
     private const string RESIZE_TAG = "resize";     // enable / disable
     private const string TEXTVELOCITY_TAG = "textVelocity";     // "value"
-    
+    private const string ORDER_TAG = "order";       // "llarg;llarg;curt;rebentat"
+
 
     [Header("Dialogue Box")]
     [Tooltip("The panel box resize based on the text size")]
@@ -79,6 +80,7 @@ public class DialogueManager : MonoBehaviour
         m_DialogueAudio = GetComponent<DialogueAudio>();
         m_tween = GetComponent<DialogueTween>();
         m_dialoguePanel.GetComponent<CanvasGroup>().alpha = 0;
+        m_dialoguePanel.SetActive(false);
     }
 
     //open the dialogue box and handle the input
@@ -89,7 +91,8 @@ public class DialogueManager : MonoBehaviour
             return;
 
         //change action map
-        GameManager.GetInstance().EnterDialogue();
+        //GameManager.GetInstance().EnterDialogue();
+        m_dialoguePanel.SetActive(true);
 
         m_currentStory = new Story(inkJSON.text);
 
@@ -112,6 +115,7 @@ public class DialogueManager : MonoBehaviour
         yield return new WaitForSeconds(0.7f);
         m_dialogueText.text = "";
         m_canEnterDialogue = true;
+        m_dialoguePanel.SetActive(false);
     }
 
     #endregion
@@ -318,6 +322,9 @@ public class DialogueManager : MonoBehaviour
                 case TEXTVELOCITY_TAG:
                     TextVeocity(tagValue);
                     break;
+                case ORDER_TAG:
+                    ProcessOrder(tagValue);
+                    break;
                 default:
                     Debug.LogError("Unexpecter tag: " + tagKey);
                     break;
@@ -351,14 +358,32 @@ public class DialogueManager : MonoBehaviour
 
     void TextVeocity(string value)
     {
-        m_TextVelocity =  float.Parse(value);
+        m_TextVelocity = float.Parse(value);
+    }
+
+    void ProcessOrder(string tagValue)
+    {
+        Dictionary<drinkType, float> drinkOrder = new Dictionary<drinkType, float>();
+        string[] order = tagValue.Split(";");
+
+        foreach (string drink in order)
+        {
+            drinkType type;
+            if (!Enum.TryParse<drinkType>(drink, out type))
+                Debug.LogError("The drink type '" + drink + "' dont exist");
+            else
+                drinkOrder[type] = drinkOrder.ContainsKey(type) ? drinkOrder[type] + 1 : 1;
+        }
+
+        GameManager.GetInstance().SetOrder(drinkOrder);
     }
 
 
-    #endregion
 
-    #region Inputs
-    public void OnContinue(InputAction.CallbackContext context)
+#endregion
+
+#region Inputs
+public void OnContinue(InputAction.CallbackContext context)
     {
         if (context.performed & !m_optionsDisplay)
             ContinueStory();

@@ -10,7 +10,6 @@ public enum characterState
     character_walkLeft
 }
 
-
 public class CharacterAnimator : MonoBehaviour
 {
     Animator animator;

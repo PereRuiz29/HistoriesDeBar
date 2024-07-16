@@ -40,8 +40,8 @@ public class FluidGenerator : MonoBehaviour
 
     private void Start()
     {
-        m_particlesContainer = CoffeMinigameController.instance.particleContainer;
-        m_fluidParticle = CoffeMinigameController.instance.GetParticle(m_fluidType);
+        m_particlesContainer = CoffeMinigameManager.instance.particleContainer;
+        m_fluidParticle = CoffeMinigameManager.instance.GetParticle(m_fluidType);
     }
 
 

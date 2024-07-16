@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -10,34 +11,34 @@ public enum drinkType
     curt,
     tallat,
     trifasic,
-    cigalo,
-    cigalocarregat,
+    rebentat,
+    rebentatCarregat,
     whisky,
     caffe,
     llet,
-    putamerda
+    putamerda           
 }
 
-public class CoffeMinigameController : MonoBehaviour
+public class CoffeMinigameManager : MonoBehaviour
 {
-    public static CoffeMinigameController instance;
+    public static CoffeMinigameManager instance;
 
     [SerializeField] private GameObject m_particleContainer;
     [SerializeField] private RectTransform m_CoffeCanvas;
     [SerializeField] private float m_barHeight = -500;
 
-    [SerializeField] private TextMeshProUGUI m_order;
+    [SerializeField] private TextMeshProUGUI m_orderText;
     [SerializeField] private Tray m_tray;
 
-    [Header("Particle Types")]
+    [Foldout("Particle Types")]
     [SerializeField] private GameObject m_waterParticle;
     [SerializeField] private GameObject m_milkParticle;
     [SerializeField] private GameObject m_coffeParticle;
     [SerializeField] private GameObject m_whiskyParticle;
     [SerializeField] private GameObject m_spillParticle;
+    [EndFoldout]
 
     private Dictionary<drinkType, float> m_drinkOrder;
-
 
     public GameObject particleContainer => m_particleContainer;
     public RectTransform coffeCanvas => m_CoffeCanvas;
@@ -53,10 +54,29 @@ public class CoffeMinigameController : MonoBehaviour
         instance = this;
     }
 
+    public static CoffeMinigameManager GetInstance()
+    {
+        return instance;
+    }
+
+    private void Start()
+    {
+        m_CoffeCanvas.gameObject.SetActive(false);
+    }
+
+    [Button]
     public void OpenCoffeMinigame()
     {
-        //Open coffe Minigame
+        m_CoffeCanvas.gameObject.SetActive(true);
+        SetOrder(GameManager.GetInstance().drinkOrder);
     }
+
+    [Button]
+    public void CloseCoffeMinigame()
+    {
+        m_CoffeCanvas.gameObject.SetActive(false);
+    }
+
 
     //Return the prefab for the given type of fluid particle
     public GameObject GetParticle(fluidType type)
@@ -92,25 +112,30 @@ public class CoffeMinigameController : MonoBehaviour
     private void SetOrder(Dictionary<drinkType, float> order)
     {
         m_drinkOrder = order;
+        ShowOrder(m_drinkOrder);
     }
 
-    [Button]
-    private void ShowOrder()
+    public Dictionary<drinkType, float> GetTraydrinks()
     {
-        string order = "Order:<br>";
+        return m_tray.GetDrinks();
+    }
 
-        Dictionary<drinkType, float> drinks = m_tray.GetDrinksTypes();
-        if (drinks != null)
+    private void ShowOrder(Dictionary<drinkType, float> order)
+    {
+        string orderText = "Order:<br>";
+
+        //Dictionary<drinkType, float> drinks = m_tray.GetDrinksTypes();
+        if (order != null)
         {
-            foreach (KeyValuePair<drinkType, float> drink in drinks)
+            foreach (KeyValuePair<drinkType, float> drink in order)
             {
-                order += " " + drink.Key;
+                orderText += " " + drink.Key;
                 if (drink.Value > 1)
-                    order += " x" + drink.Value;
-                order += "<br>";
+                    orderText += " x" + drink.Value;
+                orderText += "<br>";
             }
         }
 
-        m_order.text = order;
+        m_orderText.text = orderText;
     }
 }

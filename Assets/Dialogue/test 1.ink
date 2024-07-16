@@ -1,5 +1,7 @@
 -Això és una prova del sistema de diàlegs que he creat #speaker:NPC #audio: NPC
 -Pots passar ràpid el text si tornes a pitjar "e"
+-Cavallero, una de bravas
+-Dos llarg, un cafe curt i un rebentat #order:llarg;llarg;curt;rebentat
 -Puc fer preguntes amb diferents opcions. Ho has entès?
  + [Si]
     Perfecte

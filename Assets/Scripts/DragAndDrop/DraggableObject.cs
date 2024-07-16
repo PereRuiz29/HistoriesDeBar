@@ -39,7 +39,7 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         m_TargetJoint = GetComponent<TargetJoint2D>();
 
         m_ObjectTransform = GetComponent<RectTransform>();
-        m_CanvasTransform = CoffeMinigameController.instance.coffeCanvas;
+        m_CanvasTransform = CoffeMinigameManager.instance.coffeCanvas;
 
         m_slot = null;
         m_isDragging = false;
@@ -87,7 +87,7 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             return;
 
         //Move the object to the bar
-        float barHeight = CoffeMinigameController.instance.barHeight;
+        float barHeight = CoffeMinigameManager.instance.barHeight;
         transform.DOLocalMoveY(barHeight + m_heightOffset, 0.35f).SetEase(Ease.InOutCubic);
         transform.DOLocalRotate(Vector3.zero, 0.2f).SetEase(Ease.InOutCubic);
 

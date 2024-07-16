@@ -5,19 +5,19 @@ using VInspector;
 
 public class Tray : MonoBehaviour
 {
-    private List<GameObject> m_cupList;
+    private List<GameObject> m_trayDrinks;
 
     // Start is called before the first frame update
     void Start()
     {
-        m_cupList = new List<GameObject>();
+        m_trayDrinks = new List<GameObject>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.tag == "Cup") //This tag its only in the cup fluid trigger
         {
-            m_cupList.Add(collision.gameObject);
+            m_trayDrinks.Add(collision.gameObject);
         }
     }
 
@@ -25,7 +25,7 @@ public class Tray : MonoBehaviour
     {
         if (collision.tag == "Cup")
         {
-            m_cupList.Remove(collision.gameObject);
+            m_trayDrinks.Remove(collision.gameObject);
         }
     }
 
@@ -33,9 +33,9 @@ public class Tray : MonoBehaviour
     private void DebugList()
     {
         Debug.Log("-------------");
-        Debug.Log("Count: " + m_cupList.Count);
+        Debug.Log("Count: " + m_trayDrinks.Count);
         
-        foreach (GameObject a in m_cupList)
+        foreach (GameObject a in m_trayDrinks)
         {
             Debug.Log(a.name + " " + a);
         }
@@ -45,7 +45,7 @@ public class Tray : MonoBehaviour
     [Button]
     private void TestDiccionary()
     {
-        Dictionary<drinkType, float> drinkLlist = GetDrinksTypes();
+        Dictionary<drinkType, float> drinkLlist = GetDrinks();
 
         Debug.Log("-------------");
         Debug.Log("Count: " + drinkLlist.Count);
@@ -59,28 +59,19 @@ public class Tray : MonoBehaviour
     }
 
     //Return a diccionary with all the drinks on the Tray, return null if empty
-    public Dictionary<drinkType, float> GetDrinksTypes()
+    public Dictionary<drinkType, float> GetDrinks()
     {
-        Dictionary<drinkType, float> drinkLlist = new Dictionary<drinkType, float>();
-
-        if (m_cupList.Count == 0)
+        if (m_trayDrinks.Count == 0)
             return null;
 
-        foreach (GameObject cup in m_cupList)
+        Dictionary<drinkType, float> drinkLlist = new Dictionary<drinkType, float>();
+        foreach (GameObject cup in m_trayDrinks)
         {
             drinkType cupDrinkType = cup.transform.parent.parent.GetComponent<DraggableCup>().drinkType;
-            AddDrink(drinkLlist, cupDrinkType);
+            //Add a drink to the Dictionary list
+            drinkLlist[cupDrinkType] = drinkLlist.ContainsKey(cupDrinkType) ? drinkLlist[cupDrinkType] + 1 : 1;
         }
 
         return drinkLlist;
-    }
-
-    //Add a drink to the Dictionary list
-    private void AddDrink(Dictionary<drinkType, float> drinkLlist, drinkType type)
-    {
-        if (drinkLlist.ContainsKey(type))
-            drinkLlist[type]++;
-        else
-            drinkLlist.Add(type, 1);
     }
 }

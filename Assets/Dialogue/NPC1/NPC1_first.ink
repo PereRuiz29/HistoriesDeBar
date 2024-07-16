@@ -1,0 +1,4 @@
+-Uep, bon dia mestre! #speaker:NPC #audio:NPC
+-Escolta mestre, me posaries un cafè curt, i un rebentat #order:curt;rebentat
+-Es cafè ben <color=red>calent</color>, que <b>cremi!</b>
+-> END

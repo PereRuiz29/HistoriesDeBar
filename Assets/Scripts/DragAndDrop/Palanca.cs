@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,6 +8,9 @@ public class Palanca : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
 {
     
     [SerializeField] private FluidGenerator m_fluidGenerator;
+
+    [Tooltip("The duration of the lever when realese at max distance")]
+    [SerializeField] private float m_duration;
 
     private TargetJoint2D m_TargetJoint;
     private SliderJoint2D m_SliderJoint;
@@ -51,17 +55,20 @@ public class Palanca : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
 
     private void Update()
     {
-        if (!m_canDrag && gameObject.transform.position.y > m_MaxHeight)
+        if (!m_canDrag && gameObject.transform.position.y >= m_MaxHeight)
         {
             m_canDrag = true;
             m_fluidGenerator.StopFluid();
         }
 
-        else if (m_canDrag && gameObject.transform.position.y < m_MinHeight)
+        else if (m_canDrag && gameObject.transform.position.y <= m_MinHeight)
         {
             OnEndDrag(null);
             m_canDrag = false;
             m_fluidGenerator.StartFluid();
+
+            gameObject.transform.DOMoveY(m_MaxHeight, m_duration);
+
         }
     }
 }
