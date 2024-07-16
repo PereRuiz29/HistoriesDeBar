@@ -5,13 +5,10 @@ using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
-
     private static GameManager instance;
-
 
     DialogueManager m_dilogueManager;
     CoffeMinigameManager m_coffeMinigameManager;
-
 
     [SerializeField] private PlayerInput m_playerInput;
     [SerializeField] private PlayerInput m_dialogueInput;
@@ -25,6 +22,12 @@ public class GameManager : MonoBehaviour
     }
 
     private state m_CurrentState;
+
+    Dictionary<drinkType, float> m_drinkOrder;
+    Dictionary<drinkType, float> m_trayDrinks;
+
+    public Dictionary<drinkType, float> drinkOrder => m_drinkOrder;
+    public Dictionary<drinkType, float> trayDrinks => m_trayDrinks;
 
     void Awake()
     {
@@ -83,7 +86,25 @@ public class GameManager : MonoBehaviour
         m_dialogueInput.actions.FindActionMap("Dialogue").Disable();
         m_dialogueInput.actions.FindActionMap("dragAndDrop").Disable();
 
+        m_trayDrinks = m_coffeMinigameManager.GetTraydrinks();
         m_coffeMinigameManager.CloseCoffeMinigame();
+    }
+
+    public void SetOrder(Dictionary<drinkType, float> order)
+    {
+        m_drinkOrder = order;
+    }
+
+    public bool CheckOrder()
+    {
+        foreach (KeyValuePair<drinkType, float> drink in m_drinkOrder)
+        {
+            //if the tray doesn't have the type of drink or the number of this drink is lower than the order
+            if (!m_trayDrinks.ContainsKey(drink.Key) || drink.Value > m_trayDrinks[drink.Key])
+                return false;
+        }
+
+        return true;
     }
 
     #endregion

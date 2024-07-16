@@ -37,12 +37,7 @@ public class DraggableCup : DraggableObject
     private float m_spillColorValue;
     private float m_totalParticles;
 
-    Dictionary<fluidType, float> m_particleCounter = new Dictionary<fluidType, float>()  {
-            { fluidType.whisky, 0 },
-            { fluidType.water, 0 },
-            { fluidType.coffe, 0 },
-            { fluidType.milk, 0 },
-        };
+    Dictionary<fluidType, float> m_particleCounter;
 
     [SerializeField] private drinkType m_drinkType;
 
@@ -53,7 +48,11 @@ public class DraggableCup : DraggableObject
     {
         base.Start();
 
-        m_drinkType = drinkType.llarg;
+        m_particleCounter = new Dictionary<fluidType, float>();
+        m_particleCounter[fluidType.coffe] = 0;
+        m_particleCounter[fluidType.milk] = 0;
+        m_particleCounter[fluidType.water] = 0;
+        m_particleCounter[fluidType.whisky] = 0;
 
         UpdateFluid();
     }
@@ -65,11 +64,10 @@ public class DraggableCup : DraggableObject
         if (collision.gameObject.layer == LayerMask.NameToLayer("Fluids"))
         {
             fluidType type = collision.gameObject.GetComponent<FluidParticle>().fluidType;
-            m_particleCounter[type]++;
+            m_particleCounter[type] = m_particleCounter.ContainsKey(type) ? m_particleCounter[type] + 1 : 1;
 
             m_totalParticles++;
-
-
+           
             UpdateFluid();
 
             Destroy(collision.gameObject);

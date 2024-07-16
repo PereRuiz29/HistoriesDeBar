@@ -19,7 +19,8 @@ public class DialogueManager : MonoBehaviour
     private const string AUDIOPREDICT_TAG = "audioPredict";     // enable / disable
     private const string RESIZE_TAG = "resize";     // enable / disable
     private const string TEXTVELOCITY_TAG = "textVelocity";     // "value"
-    
+    private const string ORDER_TAG = "order";       // "llarg;llarg;curt;rebentat"
+
 
     [Header("Dialogue Box")]
     [Tooltip("The panel box resize based on the text size")]
@@ -321,6 +322,9 @@ public class DialogueManager : MonoBehaviour
                 case TEXTVELOCITY_TAG:
                     TextVeocity(tagValue);
                     break;
+                case ORDER_TAG:
+                    ProcessOrder(tagValue);
+                    break;
                 default:
                     Debug.LogError("Unexpecter tag: " + tagKey);
                     break;
@@ -354,14 +358,32 @@ public class DialogueManager : MonoBehaviour
 
     void TextVeocity(string value)
     {
-        m_TextVelocity =  float.Parse(value);
+        m_TextVelocity = float.Parse(value);
+    }
+
+    void ProcessOrder(string tagValue)
+    {
+        Dictionary<drinkType, float> drinkOrder = new Dictionary<drinkType, float>();
+        string[] order = tagValue.Split(";");
+
+        foreach (string drink in order)
+        {
+            drinkType type;
+            if (!Enum.TryParse<drinkType>(drink, out type))
+                Debug.LogError("The drink type '" + drink + "' dont exist");
+            else
+                drinkOrder[type] = drinkOrder.ContainsKey(type) ? drinkOrder[type] + 1 : 1;
+        }
+
+        GameManager.GetInstance().SetOrder(drinkOrder);
     }
 
 
-    #endregion
 
-    #region Inputs
-    public void OnContinue(InputAction.CallbackContext context)
+#endregion
+
+#region Inputs
+public void OnContinue(InputAction.CallbackContext context)
     {
         if (context.performed & !m_optionsDisplay)
             ContinueStory();

@@ -7,15 +7,15 @@ using VInspector;
 
 public enum drinkType
 {
-    llarg,              //llarg
-    curt,               //curc
-    tallat,             //tallat    
-    trifasic,           //tri
-    rebentat,           //rebentat  
-    rebentatCarregat,   //rebentat+  
-    whisky,             //whisky
-    caffe,              //caffe
-    llet,               //llet
+    llarg,
+    curt,
+    tallat,
+    trifasic,
+    rebentat,
+    rebentatCarregat,
+    whisky,
+    caffe,
+    llet,
     putamerda           
 }
 
@@ -68,6 +68,7 @@ public class CoffeMinigameManager : MonoBehaviour
     public void OpenCoffeMinigame()
     {
         m_CoffeCanvas.gameObject.SetActive(true);
+        SetOrder(GameManager.GetInstance().drinkOrder);
     }
 
     [Button]
@@ -111,25 +112,30 @@ public class CoffeMinigameManager : MonoBehaviour
     private void SetOrder(Dictionary<drinkType, float> order)
     {
         m_drinkOrder = order;
+        ShowOrder(m_drinkOrder);
     }
 
-    [Button]
-    private void ShowOrder()
+    public Dictionary<drinkType, float> GetTraydrinks()
     {
-        string order = "Order:<br>";
+        return m_tray.GetDrinks();
+    }
 
-        Dictionary<drinkType, float> drinks = m_tray.GetDrinksTypes();
-        if (drinks != null)
+    private void ShowOrder(Dictionary<drinkType, float> order)
+    {
+        string orderText = "Order:<br>";
+
+        //Dictionary<drinkType, float> drinks = m_tray.GetDrinksTypes();
+        if (order != null)
         {
-            foreach (KeyValuePair<drinkType, float> drink in drinks)
+            foreach (KeyValuePair<drinkType, float> drink in order)
             {
-                order += " " + drink.Key;
+                orderText += " " + drink.Key;
                 if (drink.Value > 1)
-                    order += " x" + drink.Value;
-                order += "<br>";
+                    orderText += " x" + drink.Value;
+                orderText += "<br>";
             }
         }
 
-        m_orderText.text = order;
+        m_orderText.text = orderText;
     }
 }

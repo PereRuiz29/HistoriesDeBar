@@ -1,0 +1,1 @@
+Ja esta tot grasis #speaker:NPC #audio:NPC

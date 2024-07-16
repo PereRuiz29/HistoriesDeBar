@@ -1,0 +1,4 @@
+-Ooo perfecte Grasis! #speaker:NPC #audio:NPC
+-Esta mel
+-Te un duro
+-> END

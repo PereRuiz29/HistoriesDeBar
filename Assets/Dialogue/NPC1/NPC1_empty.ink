@@ -1,0 +1,3 @@
+-Encara no esta? #speaker:NPC #audio:NPC
+-Tenc un poc de pressa si pot ser 
+-> END
