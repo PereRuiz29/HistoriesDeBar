@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Palanca : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+public class Palanca : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
     
     [SerializeField] private FluidGenerator m_fluidGenerator;
@@ -12,11 +12,15 @@ public class Palanca : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
     [Tooltip("The duration of the lever when realese at max distance")]
     [SerializeField] private float m_duration;
 
+    [SerializeField] private SpriteRenderer m_visual;
+
     private TargetJoint2D m_TargetJoint;
     private SliderJoint2D m_SliderJoint;
 
     private float m_MaxHeight;
     private float m_MinHeight;
+
+    private float m_visualMaxSize;
 
     private bool m_canDrag;
 
@@ -28,6 +32,8 @@ public class Palanca : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
         m_MaxHeight = m_SliderJoint.connectedAnchor.y + m_SliderJoint.limits.max;
         m_MinHeight = m_SliderJoint.connectedAnchor.y + m_SliderJoint.limits.min;
 
+        m_visualMaxSize = m_visual.transform.localScale.y;
+
         m_canDrag = true;
     }
 
@@ -36,6 +42,11 @@ public class Palanca : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
     {
         if (!m_canDrag)
             return;
+
+        Debug.Log("Drag");
+        GameManager.GetInstance().SetDraggingState(true);
+        //Change Cursor sprite
+        GameManager.GetInstance().SetDraggingCursor();
 
         m_SliderJoint.useMotor = false;
         m_TargetJoint.target = Input.mousePosition;
@@ -48,6 +59,10 @@ public class Palanca : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        GameManager.GetInstance().SetDraggingState(false);
+        //Change Cursor sprite
+        GameManager.GetInstance().SetBaseCursor();
+
         m_SliderJoint.useMotor = true;
     }
 
@@ -68,7 +83,22 @@ public class Palanca : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
             m_fluidGenerator.StartFluid();
 
             gameObject.transform.DOMoveY(m_MaxHeight, m_duration);
-
         }
+
+        m_visual.transform.localScale = new Vector3(m_visualMaxSize, m_visualMaxSize * ((transform.position.y  - m_MinHeight) / (m_MaxHeight - m_MinHeight)), 0);
     }
+
+
+    #region Change Pointer
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        GameManager.GetInstance().SetDragCursor();
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        GameManager.GetInstance().SetBaseCursor();
+    }
+    #endregion
+
 }

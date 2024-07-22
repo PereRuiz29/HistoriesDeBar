@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using VInspector;
 
 public class GameManager : MonoBehaviour
 {
@@ -13,6 +14,15 @@ public class GameManager : MonoBehaviour
     [SerializeField] private PlayerInput m_playerInput;
     [SerializeField] private PlayerInput m_dialogueInput;
     [SerializeField] private PlayerInput m_pauseInput; //not inplemented
+
+
+    [Foldout("Cursor")]
+    [SerializeField] private Texture2D m_cursorBase;
+    [SerializeField] private Texture2D m_cursorDrag;
+    [SerializeField] private Texture2D m_cursorDragging;
+    [EndFoldout]
+
+    private bool m_IsDragging;
 
     public enum state
     {
@@ -42,6 +52,7 @@ public class GameManager : MonoBehaviour
 
         m_dilogueManager = DialogueManager.GetInstance();
         m_coffeMinigameManager = CoffeMinigameManager.GetInstance();
+        SetBaseCursor();
     }
 
     public static GameManager GetInstance()
@@ -105,6 +116,33 @@ public class GameManager : MonoBehaviour
         }
 
         return true;
+    }
+
+    //If the player is currently draggind an object
+    public void SetDraggingState(bool IsDragging)
+    {
+        m_IsDragging = IsDragging;
+    }
+
+    #endregion
+
+    #region Cursor
+
+    public void SetBaseCursor()
+    {
+        if (!m_IsDragging)
+            Cursor.SetCursor(m_cursorBase, Vector2.zero, CursorMode.Auto);
+    }
+
+    public void SetDragCursor()
+    {
+        if (!m_IsDragging)
+            Cursor.SetCursor(m_cursorDrag, Vector2.zero, CursorMode.Auto);
+    }
+
+    public void SetDraggingCursor()
+    {
+        Cursor.SetCursor(m_cursorDragging, Vector2.zero, CursorMode.Auto);
     }
 
     #endregion

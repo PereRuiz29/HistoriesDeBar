@@ -27,9 +27,10 @@ public class DraggableCup : DraggableObject
     [EndFoldout]
 
     [Foldout("Debug")]
-    [SerializeField] private SpriteRenderer colorTest;
-    [SerializeField] private TextMeshProUGUI testText;
-    [SerializeField] private TextMeshProUGUI coffeTypeText;
+    [SerializeField] private bool m_ShowDebugStats;
+    [SerializeField] private SpriteRenderer m_colorTest;
+    [SerializeField] private TextMeshProUGUI m_testText;
+    [SerializeField] private TextMeshProUGUI m_coffeTypeText;
     [EndFoldout]
 
     //Particle Counter
@@ -53,6 +54,12 @@ public class DraggableCup : DraggableObject
         m_particleCounter[fluidType.milk] = 0;
         m_particleCounter[fluidType.water] = 0;
         m_particleCounter[fluidType.whisky] = 0;
+
+
+
+        m_fillGameObject.material.SetFloat("_Height", m_fillGameObject.GetComponent<RectTransform>().rect.height);
+
+        HideDebugs(m_ShowDebugStats);
 
         UpdateFluid();
     }
@@ -99,6 +106,12 @@ public class DraggableCup : DraggableObject
 
         m_fillGameObject.material.SetFloat("_FillAmount", m_percentFill);
         m_fillGameObject.material.SetFloat("_ColorValue", m_spillColorValue);
+
+
+        if (m_percentFill < 0.01)
+            m_fillGameObject.gameObject.SetActive(false);
+        else
+            m_fillGameObject.gameObject.SetActive(true);
 
         m_drinkType = GetDrinkType();
         ShowStats();
@@ -259,27 +272,27 @@ public class DraggableCup : DraggableObject
     #endregion
 
     #region Test
-
-    void OnDrawGizmos()
-    {
-        Gizmos.color = Color.blue;
-        Gizmos.DrawLine(transform.position + new Vector3(0, (- m_height * (1- m_percentFill) * transform.localScale.y) + (m_height/2 * transform.localScale.y), 0), transform.position + new Vector3(m_width / 2 * 10, (m_height * (1 - m_percentFill)) * 10, 0));
-    }
-
     private void ShowStats()
     {
+        HideDebugs(m_ShowDebugStats);
+
         string stats = "Total: " + currentParticles / m_maxParticles * 100 + "% : " + currentParticles + ",\r\n"
                     + "Water: " + m_particleCounter[fluidType.water] / currentParticles * 100 + "% : " + m_particleCounter[fluidType.water] + ",\r\n" 
                     + "Coffe: " + m_particleCounter[fluidType.coffe] / currentParticles * 100 + "% : " + m_particleCounter[fluidType.coffe] + ",\r\n" 
                     + "Whisky: " + m_particleCounter[fluidType.whisky] / currentParticles * 100 + "% : " + m_particleCounter[fluidType.whisky] + ",\r\n"
                     + "Milk: " + m_particleCounter[fluidType.milk] / currentParticles * 100 + "% : " + m_particleCounter[fluidType.milk] + ",\r\n";
 
-        testText.text = stats;
+        m_testText.text = stats;
 
-        colorTest.material.SetFloat("_ColorValue", m_spillColorValue);
-        colorTest.material.SetFloat("_FillAmount", 1);
+        m_colorTest.material.SetFloat("_ColorValue", m_spillColorValue);
+        m_colorTest.material.SetFloat("_FillAmount", 1);
 
-        coffeTypeText.text = GetDrinkType().ToString();
+        m_coffeTypeText.text = GetDrinkType().ToString();
+    }
+
+    private void HideDebugs(bool hide)
+    {
+        m_colorTest.transform.parent.gameObject.SetActive(hide);
     }
 
     #endregion
