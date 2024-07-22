@@ -726,7 +726,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c850e14ebf63f6648b4070bb905ebecf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_resizePanel: 0
+  m_resizePanel: 1
   m_preferredWidth: 900
   m_preferredHeight: 350
   m_layoutElement: {fileID: 1653723160833076841}

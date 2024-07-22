@@ -6,11 +6,13 @@ using DG.Tweening;
 using UnityEngine.InputSystem;
 using VInspector;
 
-public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
     [Header("Draggable Object")]
     [SerializeField] private bool m_canBeDropInSlot;
+    [SerializeField] private bool m_canBeDropInBigSlot;
     [SerializeField] private bool m_canRotate;
+
 
     [SerializeField] private Vector3 m_positionOffSet;
 
@@ -30,6 +32,7 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     private float m_heightOffset;
 
     public bool canBeDropInSlot => m_canBeDropInSlot;
+    public bool canBeDropInBigSlot => m_canBeDropInBigSlot;
     public float heightOffset => m_heightOffset;
 
 
@@ -48,6 +51,8 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         m_heightOffset = m_ObjectTransform.rect.height * m_ObjectTransform.localScale.y / 2;
     }
 
+
+
     #region Drag
 
     //When the object start dragging
@@ -59,6 +64,11 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         m_slot = null;
 
         m_isDragging = true;
+        GameManager.GetInstance().SetDraggingState(true);
+
+
+        //Change Cursor sprite
+        GameManager.GetInstance().SetDraggingCursor();
 
         //To be able to be dropped in slot
         m_canvasGroup.blocksRaycasts = false;
@@ -81,6 +91,10 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
         m_isDragging = false;
         isRotating = false;
+
+        GameManager.GetInstance().SetDraggingState(false);
+        //Change Cursor sprite
+        GameManager.GetInstance().SetBaseCursor();
 
         //If the object is in a slot, don't move it to the bar 
         if (m_slot != null)
@@ -153,5 +167,17 @@ public class DraggableObject : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         m_slot = slot;
     }
 
+    #endregion
+
+    #region Change Pointer
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        GameManager.GetInstance().SetDragCursor();
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        GameManager.GetInstance().SetBaseCursor();
+    }
     #endregion
 }

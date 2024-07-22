@@ -10,6 +10,8 @@ public class Slot : MonoBehaviour, IDropHandler
 
     [SerializeField] Transform SlotPoint;
 
+    [SerializeField] bool m_IsBigSlot;
+
     private bool haveObject;
 
     private void Start()
@@ -19,9 +21,12 @@ public class Slot : MonoBehaviour, IDropHandler
 
     public void OnDrop(PointerEventData eventData)
     {
+        if (eventData.pointerDrag.tag != "DraggableObject")
+            return;
+
         DraggableObject drag = eventData.pointerDrag.GetComponent<DraggableObject>();
         //If the object can be drop in this slot
-        if (haveObject || drag.canBeDropInSlot == false)
+        if (haveObject || !(drag.canBeDropInSlot || m_IsBigSlot && drag.canBeDropInBigSlot))
             return;
 
         drag.EnterSlot(this); //Pass the object this slot to notify is in slot

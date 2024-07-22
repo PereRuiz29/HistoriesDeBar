@@ -37,7 +37,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _MainTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 083c7169837dcaf4083dab9e1da12589, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -54,10 +54,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _ColorValue: 0.31
-    - _FillAmount: 0.1
+    - _ColorValue: 0.26
+    - _FillAmount: 0
     - _Float: 0.54
-    - _Height: 12.18
+    - _Height: 24
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Wobble: 0
