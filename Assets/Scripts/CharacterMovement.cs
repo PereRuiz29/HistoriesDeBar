@@ -42,9 +42,9 @@ public class CharacterMovement : MonoBehaviour
 
         //rotate the movent vector to match with the camera
         float cameraAngle = m_camera.transform.eulerAngles.y;
-        m_Movement = Quaternion.AngleAxis(cameraAngle, Vector3.up) * m_Movement;
+        Vector3 m_CameraMovement = Quaternion.AngleAxis(cameraAngle, Vector3.up) * m_Movement;
 
-        m_CharacterMovement.Move(m_Movement * Time.deltaTime);
+        m_CharacterMovement.Move(m_CameraMovement * Time.deltaTime);
 
         //Animation
         if (m_Movement.x == 0 && m_Movement.z == 0)

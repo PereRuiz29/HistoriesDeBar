@@ -15,6 +15,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] private PlayerInput m_dialogueInput;
     [SerializeField] private PlayerInput m_pauseInput; //not inplemented
 
+    [Foldout("Virtual Cameras")]
+    [SerializeField] private GameObject m_virtualCamera1;
+    [SerializeField] private GameObject m_virtualCamera2;
+    [EndFoldout]
 
     [Foldout("Cursor")]
     [SerializeField] private Texture2D m_cursorBase;
@@ -143,6 +147,21 @@ public class GameManager : MonoBehaviour
     public void SetDraggingCursor()
     {
         Cursor.SetCursor(m_cursorDragging, Vector2.zero, CursorMode.Auto);
+    }
+
+    #endregion
+
+    #region Virtual Camera
+    public void EnableCamera1()
+    {
+        m_virtualCamera1.SetActive(true);
+        m_virtualCamera2.SetActive(false);
+    }
+
+    public void EnableCamera2()
+    {
+        m_virtualCamera1.SetActive(false);
+        m_virtualCamera2.SetActive(true);
     }
 
     #endregion
