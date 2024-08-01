@@ -7,7 +7,9 @@ public enum characterState
 {
     character_idle,
     character_walkRight,
-    character_walkLeft
+    character_walkLeft,
+    character_walkFront,
+    character_walkBack
 }
 
 public class CharacterAnimator : MonoBehaviour

@@ -46,13 +46,28 @@ public class CharacterMovement : MonoBehaviour
 
         m_CharacterMovement.Move(m_CameraMovement * Time.deltaTime);
 
+
+        Debug.Log("Movement: " + m_Movement);
         //Animation
         if (m_Movement.x == 0 && m_Movement.z == 0)
             m_animator.ChangeAnimationState(characterState.character_idle);
-        else if (m_Movement.x < 0 || m_Movement.z > 0)
+        else if (m_Movement.x < 0)
             m_animator.ChangeAnimationState(characterState.character_walkLeft);
-        else
+        else if (m_Movement.x > 0 )
             m_animator.ChangeAnimationState(characterState.character_walkRight);
+        else if (m_Movement.z < 0)
+        {
+            Debug.Log("Front");
+            m_animator.ChangeAnimationState(characterState.character_walkFront);
+        }
+        else 
+        {
+            Debug.Log("Back");
+
+            m_animator.ChangeAnimationState(characterState.character_walkBack);
+
+        }
+
     }
 
     //read input
