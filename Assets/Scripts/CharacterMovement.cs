@@ -14,7 +14,7 @@ public class CharacterMovement : MonoBehaviour
     [SerializeField]
     private float m_Gravity;
 
-    private GameObject m_camera;
+    private Transform m_camera;
 
     private CharacterAnimator m_animator;
 
@@ -22,7 +22,7 @@ public class CharacterMovement : MonoBehaviour
     {
         m_CharacterMovement = gameObject.GetComponent<CharacterController>();
         m_animator = GetComponent<CharacterAnimator>();
-        m_camera = GameObject.Find("Main Camera");
+        m_camera = GameManager.GetInstance().camera;
     }
 
     void Update()
@@ -30,7 +30,7 @@ public class CharacterMovement : MonoBehaviour
         Movement();
        
         //rotate sprite to look at camera, (have to implemented in another script)
-        float cameraAngle = m_camera.transform.eulerAngles.y;
+        float cameraAngle = m_camera.eulerAngles.y;
         transform.eulerAngles = new Vector3(0, cameraAngle, 0);
     }
 
@@ -47,7 +47,6 @@ public class CharacterMovement : MonoBehaviour
         m_CharacterMovement.Move(m_CameraMovement * Time.deltaTime);
 
 
-        Debug.Log("Movement: " + m_Movement);
         //Animation
         if (m_Movement.x == 0 && m_Movement.z == 0)
             m_animator.ChangeAnimationState(characterState.character_idle);
@@ -56,17 +55,9 @@ public class CharacterMovement : MonoBehaviour
         else if (m_Movement.x > 0 )
             m_animator.ChangeAnimationState(characterState.character_walkRight);
         else if (m_Movement.z < 0)
-        {
-            Debug.Log("Front");
             m_animator.ChangeAnimationState(characterState.character_walkFront);
-        }
         else 
-        {
-            Debug.Log("Back");
-
             m_animator.ChangeAnimationState(characterState.character_walkBack);
-
-        }
 
     }
 

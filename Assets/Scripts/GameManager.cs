@@ -1,8 +1,16 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using VInspector;
+
+public enum virtualCamera
+{
+    camera1 = 0,
+    camera2 = 1,
+    camera3 = 2
+}
 
 public class GameManager : MonoBehaviour
 {
@@ -16,8 +24,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private PlayerInput m_pauseInput; //not inplemented
 
     [Foldout("Virtual Cameras")]
-    [SerializeField] private GameObject m_virtualCamera1;
-    [SerializeField] private GameObject m_virtualCamera2;
+    [SerializeField] private GameObject[] m_virtualCameras;
     [EndFoldout]
 
     [Foldout("Cursor")]
@@ -26,6 +33,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Texture2D m_cursorDragging;
     [EndFoldout]
 
+    private Transform m_camera;
     private bool m_IsDragging;
 
     public enum state
@@ -37,11 +45,14 @@ public class GameManager : MonoBehaviour
 
     private state m_CurrentState;
 
+    private virtualCamera m_virtualCamera;
+
     Dictionary<drinkType, float> m_drinkOrder;
     Dictionary<drinkType, float> m_trayDrinks;
 
     public Dictionary<drinkType, float> drinkOrder => m_drinkOrder;
     public Dictionary<drinkType, float> trayDrinks => m_trayDrinks;
+    public Transform camera => m_camera;
 
     void Awake()
     {
@@ -56,6 +67,7 @@ public class GameManager : MonoBehaviour
 
         m_dilogueManager = DialogueManager.GetInstance();
         m_coffeMinigameManager = CoffeMinigameManager.GetInstance();
+        m_camera = GameObject.Find("Main Camera").transform;
         SetBaseCursor();
     }
 
@@ -152,16 +164,16 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Virtual Camera
-    public void EnableCamera1()
+    //Change the active virtual camera newCamera
+    public void ChangeCamera(virtualCamera newCamera, float transitionTime = 1)
     {
-        m_virtualCamera1.SetActive(true);
-        m_virtualCamera2.SetActive(false);
-    }
+        m_virtualCameras[0].SetActive(false);
+        m_virtualCameras[1].SetActive(false);
+        m_virtualCameras[2].SetActive(false);
 
-    public void EnableCamera2()
-    {
-        m_virtualCamera1.SetActive(false);
-        m_virtualCamera2.SetActive(true);
+
+        m_camera.GetComponent<CinemachineBrain>().m_DefaultBlend.m_Time = transitionTime;
+        m_virtualCameras[(int)newCamera].SetActive(true);
     }
 
     #endregion
