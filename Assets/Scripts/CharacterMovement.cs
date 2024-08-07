@@ -14,7 +14,7 @@ public class CharacterMovement : MonoBehaviour
     [SerializeField]
     private float m_Gravity;
 
-    private GameObject m_camera;
+    private Transform m_camera;
 
     private CharacterAnimator m_animator;
 
@@ -22,7 +22,7 @@ public class CharacterMovement : MonoBehaviour
     {
         m_CharacterMovement = gameObject.GetComponent<CharacterController>();
         m_animator = GetComponent<CharacterAnimator>();
-        m_camera = GameObject.Find("Main Camera");
+        m_camera = GameManager.GetInstance().camera;
     }
 
     void Update()
@@ -30,7 +30,7 @@ public class CharacterMovement : MonoBehaviour
         Movement();
        
         //rotate sprite to look at camera, (have to implemented in another script)
-        float cameraAngle = m_camera.transform.eulerAngles.y;
+        float cameraAngle = m_camera.eulerAngles.y;
         transform.eulerAngles = new Vector3(0, cameraAngle, 0);
     }
 
@@ -42,17 +42,23 @@ public class CharacterMovement : MonoBehaviour
 
         //rotate the movent vector to match with the camera
         float cameraAngle = m_camera.transform.eulerAngles.y;
-        m_Movement = Quaternion.AngleAxis(cameraAngle, Vector3.up) * m_Movement;
+        Vector3 m_CameraMovement = Quaternion.AngleAxis(cameraAngle, Vector3.up) * m_Movement;
 
-        m_CharacterMovement.Move(m_Movement * Time.deltaTime);
+        m_CharacterMovement.Move(m_CameraMovement * Time.deltaTime);
+
 
         //Animation
         if (m_Movement.x == 0 && m_Movement.z == 0)
             m_animator.ChangeAnimationState(characterState.character_idle);
-        else if (m_Movement.x < 0 || m_Movement.z > 0)
+        else if (m_Movement.x < 0)
             m_animator.ChangeAnimationState(characterState.character_walkLeft);
-        else
+        else if (m_Movement.x > 0 )
             m_animator.ChangeAnimationState(characterState.character_walkRight);
+        else if (m_Movement.z < 0)
+            m_animator.ChangeAnimationState(characterState.character_walkFront);
+        else 
+            m_animator.ChangeAnimationState(characterState.character_walkBack);
+
     }
 
     //read input
