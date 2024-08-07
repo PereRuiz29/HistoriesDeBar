@@ -8,10 +8,10 @@ public class Chair : MonoBehaviour
     [SerializeField] private bool m_HasCharacter;
 
     [Foldout("Chair Sprites")]
-    [SerializeField]  private Sprite m_spriteFrontL;
-    [SerializeField]  private Sprite m_spriteFrontR;
-    [SerializeField]  private Sprite m_spriteBackL;
-    [SerializeField]  private Sprite m_spriteBackR;
+    [SerializeField] private Sprite m_spriteFrontL;
+    [SerializeField] private Sprite m_spriteFrontR;
+    [SerializeField] private Sprite m_spriteBackL;
+    [SerializeField] private Sprite m_spriteBackR;
     [EndFoldout]
 
     [Foldout("Chair Character Sprites")]
@@ -34,6 +34,7 @@ public class Chair : MonoBehaviour
 
         m_spriteRenderer = GetComponent<SpriteRenderer>();
     }
+
 
     // Update is called once per frame
     void Update()
@@ -66,7 +67,5 @@ public class Chair : MonoBehaviour
             else
                 m_spriteRenderer.sprite = m_spriteBackL;
         }
-       
-        //Debug.Log("Chair a: " + m_chairAngle + " Camera a: " + m_camera.eulerAngles.y + " DeltaAngle: " + Mathf.DeltaAngle(m_chairAngle, m_camera.eulerAngles.y));
     }
 }
