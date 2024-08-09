@@ -53,7 +53,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: ca8a6930dcb1ed44ab3841b5cb237914, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -97,7 +97,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7888d0cae037144bbbb640c6df1df26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_HasNPC: 0
+  m_HasCharacter: 0
   m_spriteFrontL: {fileID: 21300000, guid: 0576ddb0184ff3b41999ccbb3336dba8, type: 3}
   m_spriteFrontR: {fileID: 21300000, guid: 20a43c1894c836d4fa10664b8eb546d5, type: 3}
   m_spriteBackL: {fileID: 21300000, guid: c5e06229b07b0084ea92e639f0ce29cb, type: 3}

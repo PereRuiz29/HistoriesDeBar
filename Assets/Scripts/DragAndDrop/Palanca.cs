@@ -43,7 +43,6 @@ public class Palanca : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
         if (!m_canDrag)
             return;
 
-        Debug.Log("Drag");
         GameManager.GetInstance().SetDraggingState(true);
         //Change Cursor sprite
         GameManager.GetInstance().SetDraggingCursor();
