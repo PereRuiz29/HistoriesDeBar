@@ -5,7 +5,7 @@ using UnityEngine;
 public class DialogueTrigger : Interactable
 {
     [Header("Ink JSON")]
-    [Tooltip("When the player talk to the NPC for the first time")] //here makes the order
+    [Tooltip("When the player talk to the NPC for the first time")]
     [SerializeField] private TextAsset m_firstDialogue;
     [Tooltip("When the player talk to the NPC without any drinks")]
     [SerializeField] private TextAsset m_emptyTrayDialogue;
@@ -25,7 +25,7 @@ public class DialogueTrigger : Interactable
         m_IsAlreadyServed = false;
     }
 
-public override void Interact()
+    public override void Interact()
     {
         if (m_IsFirstDialogue)
         {

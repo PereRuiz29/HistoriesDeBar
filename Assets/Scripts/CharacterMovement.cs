@@ -28,7 +28,7 @@ public class CharacterMovement : MonoBehaviour
     void Update()
     {
         Movement();
-       
+
         //rotate sprite to look at camera, (have to implemented in another script)
         float cameraAngle = m_camera.eulerAngles.y;
         transform.eulerAngles = new Vector3(0, cameraAngle, 0);
@@ -38,13 +38,15 @@ public class CharacterMovement : MonoBehaviour
     public void Movement()
     {
         //aply velocity and gravity
-        m_Movement = new Vector3(m_InputVector.x, -m_Gravity, m_InputVector.y) * m_speed;
+        //m_Movement = new Vector3(m_InputVector.x, -m_Gravity, m_InputVector.y) * m_speed;
+        m_Movement = new Vector3(m_InputVector.x, 0, m_InputVector.y) * m_speed;
 
         //rotate the movent vector to match with the camera
         float cameraAngle = m_camera.transform.eulerAngles.y;
         Vector3 m_CameraMovement = Quaternion.AngleAxis(cameraAngle, Vector3.up) * m_Movement;
 
-        m_CharacterMovement.Move(m_CameraMovement * Time.deltaTime);
+        //m_CharacterMovement.Move(m_CameraMovement * Time.deltaTime);
+        m_CharacterMovement.SimpleMove(m_CameraMovement);
 
 
         //Animation

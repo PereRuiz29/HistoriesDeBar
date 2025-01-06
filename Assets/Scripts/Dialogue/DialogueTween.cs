@@ -65,7 +65,7 @@ public class DialogueTween : MonoBehaviour
 
     #region Main Box
     //open dialogue animation
-    public void openDialogue()
+    public void OpenDialogue()
     {
         m_mainBox.transform.localScale = new Vector3(1.1f, 1.1f, 1.1f);
         m_mainBox.GetComponent<CanvasGroup>().alpha = 0;
@@ -77,7 +77,7 @@ public class DialogueTween : MonoBehaviour
     }
 
     //close dialogue animation
-    public void closeDialogue()
+    public void CloseDialogue()
     {
         Sequence seq = DOTween.Sequence();
         seq.PrependInterval(HideSpeakerName());
@@ -94,7 +94,7 @@ public class DialogueTween : MonoBehaviour
         m_continueAnimation = m_continueIcon.DOLocalMoveY(2, 0.5f).SetLoops(-1, LoopType.Yoyo);
     }
 
-    public void hideContinueIcon()
+    public void HideContinueIcon()
     {
         m_continueAnimation.Kill();
         m_continueIcon.localPosition = Vector3.zero;
@@ -108,7 +108,7 @@ public class DialogueTween : MonoBehaviour
     //Show all button in order top to bottom recursively
     //Pre: List of the buttons and the idex of the last button
     //Post: The delay of the animation
-    public float showChoices(List<GameObject> m_choices, int index)
+    public float ShowChoices(List<GameObject> m_choices, int index)
     {
         if (index < 1)
             return 0;
@@ -119,7 +119,7 @@ public class DialogueTween : MonoBehaviour
         button.GetComponent<CanvasGroup>().alpha = 0;
 
         Sequence seq = DOTween.Sequence();
-        seq.PrependInterval(showChoices(m_choices, index -1));
+        seq.PrependInterval(ShowChoices(m_choices, index -1));
         seq.Append(button.transform.DOScale(Vector3.one, 0.1f)).SetEase(Ease.InOutCirc);
         seq.Join(button.GetComponent<CanvasGroup>().DOFade(1, 0.1f)).SetEase(Ease.InOutCirc);
         return seq.Duration();
@@ -128,7 +128,7 @@ public class DialogueTween : MonoBehaviour
     //Hide all the buttons bottom to top recursively
     //Pre: List of the buttons and the idex first
     //Post: The delay of the animation
-    public float hideChoices(List<GameObject> m_choices, int index)
+    public float HideChoices(List<GameObject> m_choices, int index)
     {
         if (index >= m_choices.Count)
             return 0;
@@ -141,14 +141,14 @@ public class DialogueTween : MonoBehaviour
 
 
         Sequence seq = DOTween.Sequence();
-        seq.PrependInterval(hideChoices(m_choices, index + 1));
+        seq.PrependInterval(HideChoices(m_choices, index + 1));
         seq.Append(button.transform.DOScale(new Vector3(0.9f, 0.9f, 0.9f), 0.1f)).SetEase(Ease.InOutCirc);
         seq.Join(button.GetComponent<CanvasGroup>().DOFade(0, 0.05f)).SetEase(Ease.InOutCirc);
         return seq.Duration();
     }
 
     //Set a loop animation to the buttons arrows
-    public void showArrows(List<GameObject> m_choices)
+    public void ShowArrows(List<GameObject> m_choices)
     {
         foreach(GameObject button in m_choices)
         {
@@ -160,7 +160,7 @@ public class DialogueTween : MonoBehaviour
     }
     
     //kill the animation of all arrows
-    public void hideArrows()
+    public void HideArrows()
     {
         foreach(Tween arrowAnimation in m_arrows)
         {

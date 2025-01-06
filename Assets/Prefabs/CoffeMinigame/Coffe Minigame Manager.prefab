@@ -688,7 +688,7 @@ GameObject:
   - component: {fileID: 2826194324350934335}
   - component: {fileID: 7275724636527600902}
   m_Layer: 5
-  m_Name: Tray(Palangana)
+  m_Name: Tray
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

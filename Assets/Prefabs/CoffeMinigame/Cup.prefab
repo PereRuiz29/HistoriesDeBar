@@ -694,6 +694,18 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 4bc6225a-6e7f-462a-bf71-ed3a3d2de287
     m_ActionName: DragAndDrop/Rotate[/Mouse/rightButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: a585c896-1ce1-4f87-b3dc-cc21550416e5
+    m_ActionName: Player/Pause[/Keyboard/escape]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: a294b4fa-c187-451e-9ba7-8c4d9b8fe0a1
+    m_ActionName: Dialogue/Pause[/Keyboard/escape]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 43f0af96-ce8e-4661-9649-f5293773c072
+    m_ActionName: DragAndDrop/Pause[/Keyboard/escape]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: DragAndDrop

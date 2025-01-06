@@ -21,7 +21,7 @@ public class ChoiceButton : MonoBehaviour, ISelectHandler, IDeselectHandler
     public bool playAudio;
 
 
-    void Start()
+    private void Start()
     {
         m_layoutElement.enabled = (m_contentField.preferredWidth > m_layoutElement.preferredWidth);
         //layout rebuild to force the verticalLayerGroup of the parent work as intented
@@ -37,6 +37,10 @@ public class ChoiceButton : MonoBehaviour, ISelectHandler, IDeselectHandler
         m_selectIcon.SetActive(true);
         transform.DOLocalMoveX(20, 0.2f);
     }
+
+
+    string nom = "asd";
+    int a = 123;
 
     public void OnDeselect(BaseEventData eventData)
     {

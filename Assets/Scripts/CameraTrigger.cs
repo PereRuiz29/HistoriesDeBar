@@ -15,7 +15,6 @@ public class CameraTrigger : MonoBehaviour
         if (other.tag == "Player")
         {
             GameManager.GetInstance().ChangeCamera(m_camera, m_transitionTime);
-
         }
     }
 }

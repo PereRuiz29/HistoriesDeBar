@@ -42,7 +42,7 @@ public class DialogueAudio : MonoBehaviour
     }
 
     //Active hash or make audio random
-    public void MakeAudioPrectable(string toggle)
+    public void MakeAudioPredictable(string toggle)
     {
         if (toggle == "enable")
             m_MakePredictable = true;

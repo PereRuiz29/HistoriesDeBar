@@ -9,7 +9,6 @@ public class InteractTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-
         if (other.tag == "Interactable")
         {
             m_interactable = other.gameObject;

@@ -96,7 +96,7 @@ public class DialogueManager : MonoBehaviour
 
         m_currentStory = new Story(inkJSON.text);
 
-        m_tween.openDialogue();
+        m_tween.OpenDialogue();
         ContinueStory();
     }
 
@@ -110,7 +110,7 @@ public class DialogueManager : MonoBehaviour
         GameManager.GetInstance().ExitDialogue();
 
         //exit animation
-        m_tween.closeDialogue();
+        m_tween.CloseDialogue();
 
         yield return new WaitForSeconds(0.7f);
         m_dialogueText.text = "";
@@ -148,7 +148,7 @@ public class DialogueManager : MonoBehaviour
         m_dialogueText.text = line;
         m_dialogueText.maxVisibleCharacters = 0;
         m_textIsWriting = true;
-        m_tween.hideContinueIcon();
+        m_tween.HideContinueIcon();
         ResizePanel();
 
         bool isAddingRichTextTag = false;
@@ -176,6 +176,17 @@ public class DialogueManager : MonoBehaviour
         StartCoroutine(DisplayChoices());
     }
 
+    //cancel the DisplayText courotine and display all the line Instantanally
+    private void DisplayTextImmediately()
+    {
+        m_textIsWriting = false;
+        m_tween.ShowContinueIcon();
+        StopCoroutine(m_displayTextCoroutine);
+
+        m_dialogueText.maxVisibleCharacters = m_currentStory.currentText.Length;
+        StartCoroutine(DisplayChoices());
+    }
+
     //The panel box resize based on the text size
     private void ResizePanel()
     {
@@ -196,17 +207,6 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
-    //cancel the DisplayText courotine and display all the line Instantanally
-    private void DisplayTextImmediately()
-    {
-        m_textIsWriting = false;
-        m_tween.ShowContinueIcon();
-        StopCoroutine(m_displayTextCoroutine);
-
-        m_dialogueText.maxVisibleCharacters = m_currentStory.currentText.Length;
-        StartCoroutine(DisplayChoices());
-    }
-
     #endregion
 
     #region Choices
@@ -220,7 +220,7 @@ public class DialogueManager : MonoBehaviour
             m_optionsDisplay = false;
             yield break;
         }
-        m_tween.hideContinueIcon();
+        m_tween.HideContinueIcon();
         m_optionsDisplay = true;
 
         //to avoid problems with the input
@@ -256,7 +256,7 @@ public class DialogueManager : MonoBehaviour
             m_choices[i].GetComponent<Button>().navigation = navigation;
         }
 
-        yield return new WaitForSeconds(m_tween.showChoices(m_choices, m_choices.Count));
+        yield return new WaitForSeconds(m_tween.ShowChoices(m_choices, m_choices.Count));
 
         //select the first button
         EventSystem.current.SetSelectedGameObject(m_choices[0]);
@@ -267,7 +267,7 @@ public class DialogueManager : MonoBehaviour
     //enable all displaced buttons with a little delay time to avoid problems with the input
     private void EnableButtons()
     {
-        m_tween.showArrows(m_choices);
+        m_tween.ShowArrows(m_choices);
 
         for (int i = 0; i < m_currentStory.currentChoices.Count; i++)
         {
@@ -279,7 +279,7 @@ public class DialogueManager : MonoBehaviour
     IEnumerator RemoveChoices(float time)
     {
         yield return new WaitForSeconds(time);
-        m_tween.hideArrows();
+        m_tween.HideArrows();
 
         foreach (GameObject button in m_choices)
             Destroy(button);
@@ -320,7 +320,7 @@ public class DialogueManager : MonoBehaviour
                     ResizeBox(tagValue);
                     break;
                 case TEXTVELOCITY_TAG:
-                    TextVeocity(tagValue);
+                    TextVelocity(tagValue);
                     break;
                 case ORDER_TAG:
                     ProcessOrder(tagValue);
@@ -356,7 +356,7 @@ public class DialogueManager : MonoBehaviour
     }
 
 
-    void TextVeocity(string value)
+    void TextVelocity(string value)
     {
         m_TextVelocity = float.Parse(value);
     }
@@ -383,7 +383,7 @@ public class DialogueManager : MonoBehaviour
 #endregion
 
 #region Inputs
-public void OnContinue(InputAction.CallbackContext context)
+    public void OnContinue(InputAction.CallbackContext context)
     {
         if (context.performed & !m_optionsDisplay)
             ContinueStory();
@@ -402,7 +402,7 @@ public void OnContinue(InputAction.CallbackContext context)
         m_optionsDisplay = false;
 
         //remove current choices with an animation and display the next line
-        StartCoroutine(RemoveChoices(m_tween.hideChoices(m_choices, 0)));
+        StartCoroutine(RemoveChoices(m_tween.HideChoices(m_choices, 0)));
     }
 
     #endregion
