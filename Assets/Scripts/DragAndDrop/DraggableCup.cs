@@ -232,34 +232,37 @@ public class DraggableCup : DraggableObject
         float coffe = m_particleCounter[fluidType.coffe] / currentParticles * 100;
 
 
-        if (whisky > 95)
+        if (whisky > 95 && m_totalParticles > 100)
             return drinkType.whisky;
 
-        if (llet > 95)
-            return drinkType.caffe;
+        if (llet > 95 && m_totalParticles > 100)
+            return drinkType.llet;
 
-        if (coffe > 95)
-            return drinkType.caffe;
+        if (coffe > 95 && m_totalParticles > 250 && m_totalParticles < 450)
+            return drinkType.cafe;
+
+        if (coffe > 95 && m_totalParticles > 150 && m_totalParticles < 250)
+            return drinkType.curt;
+
+        if (coffe > 95 && m_totalParticles > 450)
+            return drinkType.llarg;
 
 
         if (whisky < 5)
         {
-            if (coffe < 40 && coffe > 20)
-                return drinkType.curt;
-
-            if (coffe > 40 && coffe < 60)
+            if (coffe > 40 && coffe < 60 && m_totalParticles > 100 && m_totalParticles < 350)
                 return drinkType.tallat;
 
-            if (coffe < 80 && coffe > 60)
-                return drinkType.llarg;
+            if (coffe > 40 && coffe < 60 && m_totalParticles > 350)
+                return drinkType.cafeAmbLlet;
         }
 
         if (llet < 5)
         {
-            if (whisky > 15 && whisky < 25)
+            if (whisky > 15 && whisky < 25 && m_totalParticles > 100 && m_totalParticles < 300)
                 return drinkType.rebentat;
 
-            if (whisky > 25 && whisky < 40)
+            if (whisky > 25 && whisky < 40 && m_totalParticles > 100 && m_totalParticles < 350)
                 return drinkType.rebentatCarregat;
         }
 

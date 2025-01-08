@@ -1,1 +1,1 @@
-Ya esta todo, te puedes ir. #speaker:José María
+Ya está todo, te puedes ir. #speaker:José María

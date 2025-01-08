@@ -1,1 +1,1 @@
-Ja esta tot gràcies #speaker:Joan #audio:NPC
+Ja està tot, gràcies #speaker:Joan #audio:NPC

@@ -118,7 +118,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4395472489063124441, guid: 421ea33003031a34fa85bdb97471f152, type: 3}
       propertyPath: m_maxParticles
-      value: 300
+      value: 450
       objectReference: {fileID: 0}
     - target: {fileID: 6184094643334474001, guid: 421ea33003031a34fa85bdb97471f152, type: 3}
       propertyPath: m_AnchoredPosition.y

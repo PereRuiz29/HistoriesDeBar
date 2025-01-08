@@ -1,0 +1,1 @@
+No et preocupis si has de servir als altres primer, ja t'he dit que a jo no m'esperen enlloc. #speaker:Miquel #audio:NPC #

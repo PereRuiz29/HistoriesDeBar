@@ -78,11 +78,6 @@ public class GameManager : MonoBehaviour
         m_dialogueInput.actions.FindActionMap("Dialogue").Disable();
         m_dialogueInput.actions.FindActionMap("dragAndDrop").Disable();
 
-        m_dilogueManager = DialogueManager.GetInstance();
-        m_coffeMinigameManager = CoffeMinigameManager.GetInstance();
-        m_camera = GameObject.Find("Main Camera").transform;
-        m_myEventSystem = GameObject.Find("Event System");
-        SetBaseCursor();
     }
 
     public static GameManager GetInstance()
@@ -93,6 +88,13 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        m_dilogueManager = DialogueManager.GetInstance();
+        m_coffeMinigameManager = CoffeMinigameManager.GetInstance();
+        m_camera = GameObject.Find("Main Camera").transform;
+        m_myEventSystem = GameObject.Find("Event System");
+        SetBaseCursor();
+
+
         m_CurrentState = state.player;
         m_pauseMenu.SetActive(false);
         PauseGame();

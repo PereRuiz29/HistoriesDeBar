@@ -548,7 +548,7 @@ PrefabInstance:
       objectReference: {fileID: 2148249356995714223}
     - target: {fileID: 7807164412468595743, guid: 6cd8bfaae10f12247b2ef2a1d5efc16a, type: 3}
       propertyPath: m_text
-      value: Start
+      value: "Comen\xE7ar"
       objectReference: {fileID: 0}
     - target: {fileID: 7807164412468595743, guid: 6cd8bfaae10f12247b2ef2a1d5efc16a, type: 3}
       propertyPath: m_fontSize
@@ -693,7 +693,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7807164412468595743, guid: 6cd8bfaae10f12247b2ef2a1d5efc16a, type: 3}
       propertyPath: m_text
-      value: Quit Game
+      value: Sortir
       objectReference: {fileID: 0}
     - target: {fileID: 7807164412468595743, guid: 6cd8bfaae10f12247b2ef2a1d5efc16a, type: 3}
       propertyPath: m_fontSize

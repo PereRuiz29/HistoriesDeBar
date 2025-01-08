@@ -14,7 +14,8 @@ public enum drinkType
     rebentat,
     rebentatCarregat,
     whisky,
-    caffe,
+    cafeAmbLlet,
+    cafe,
     llet,
     resBo           
 }

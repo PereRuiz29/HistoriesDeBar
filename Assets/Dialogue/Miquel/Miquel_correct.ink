@@ -1,0 +1,1 @@
+Està perfecte, moltes gràcies #speaker:Miquel #audio:NPC

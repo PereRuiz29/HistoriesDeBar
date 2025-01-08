@@ -1,1 +1,1 @@
-Perona pero no era aixo lo que haviem demenat, voliem un tallat, cafè llarg i un curt. #speaker:Joan #audio:NPC #order:llarg;curt;tallat
+Perdona pero no era això lo que haviem demanat, voliem un tallat, un cafè llarg i un curt. #speaker:Joan #audio:NPC #order:llarg;curt;tallat

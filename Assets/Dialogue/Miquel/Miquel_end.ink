@@ -1,0 +1,1 @@
+Vols res? #speaker:Miquel #audio:NPC

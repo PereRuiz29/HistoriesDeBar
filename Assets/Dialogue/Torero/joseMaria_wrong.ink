@@ -1,0 +1,1 @@
+¡Y encima te equivocas! Mira que he tenido que elegir el peor antro. #speaker:José María #audio: NPC_Greu

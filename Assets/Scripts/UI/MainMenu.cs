@@ -28,7 +28,7 @@ public class MainMenu : MonoBehaviour
         //Hide Buttons
         foreach (Button button in m_buttons)
         {
-            button.image.fillAmount = 0;
+            button.image.GetComponent<CanvasGroup>().alpha = 0;
             button.GetComponentInChildren<TextMeshProUGUI>().alpha = 0;
         }
 
@@ -47,8 +47,8 @@ public class MainMenu : MonoBehaviour
 
         Sequence sequence = DOTween.Sequence();
         sequence
-            .Insert(0, m_buttons[0].image.DOFillAmount(1, 0.5f).SetEase(Ease.InOutCirc))
-            .Insert(0.1f, m_buttons[1].image.DOFillAmount(1, 0.5f).SetEase(Ease.InOutCirc));
+            .Insert(0, m_buttons[0].image.GetComponent<CanvasGroup>().DOFade(1, 0.5f).SetEase(Ease.InOutCirc))
+            .Insert(0.1f, m_buttons[1].image.GetComponent<CanvasGroup>().DOFade(1, 0.5f).SetEase(Ease.InOutCirc));
             //.Insert(0.2f, m_buttons[2].image.DOFillAmount(1, 0.5f).SetEase(Ease.InOutCirc));
 
         sequence

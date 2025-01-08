@@ -30,15 +30,24 @@ public class Chair : MonoBehaviour
     void Start()
     {
         m_chairAngle = transform.eulerAngles.y;
+        Invoke("HotFix", 0.1f);
+        m_spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
+    void HotFix()
+    {
         m_camera = GameManager.GetInstance().camera;
 
-        m_spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
 
     // Update is called once per frame
     void Update()
     {
+
+        if (m_camera == null)
+            return;
+
         //rotate sprite to look at camera, (have to implemented in another script)
         float cameraAngle = m_camera.eulerAngles.y;
         transform.eulerAngles = new Vector3(0, cameraAngle, 0);
