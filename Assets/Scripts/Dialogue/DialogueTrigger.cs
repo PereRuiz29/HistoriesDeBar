@@ -42,6 +42,7 @@ public class DialogueTrigger : Interactable
         {
             GameManager.GetInstance().EnterDialogue(m_correctOrderDialogue);//correct order
             m_IsAlreadyServed = true;
+            GameManager.GetInstance().OrderReady();
         }
         else
             GameManager.GetInstance().EnterDialogue(m_wrongOrderDialogue);  //wrong order

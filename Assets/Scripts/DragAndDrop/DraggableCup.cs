@@ -115,6 +115,7 @@ public class DraggableCup : DraggableObject
 
         m_drinkType = GetDrinkType();
         ShowStats();
+        ShowCoffeType();
     }
 
     #endregion
@@ -265,13 +266,25 @@ public class DraggableCup : DraggableObject
         if (coffe < 60 && coffe > 40 && whisky < 15 && whisky > 7)
             return drinkType.trifasic;
 
-        return drinkType.putamerda;
+        return drinkType.resBo;
 
     }
 
     #endregion
 
     #region Test
+
+    private void ShowCoffeType()
+    {
+        if (GetDrinkType().ToString() != "resBo")
+            m_coffeTypeText.transform.parent.gameObject.SetActive(true);
+        else
+            m_coffeTypeText.transform.parent.gameObject.SetActive(false);
+
+
+        m_coffeTypeText.text = GetDrinkType().ToString();
+    }
+
     private void ShowStats()
     {
         HideDebugs(m_ShowDebugStats);

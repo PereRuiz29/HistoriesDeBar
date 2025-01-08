@@ -1,0 +1,1 @@
+Voliem un tallat, cafè llarg i un curt. #speaker:Joan #audio:NPC #order:llarg;curt;tallat

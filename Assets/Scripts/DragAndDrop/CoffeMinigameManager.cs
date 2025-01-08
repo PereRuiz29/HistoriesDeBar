@@ -16,7 +16,7 @@ public enum drinkType
     whisky,
     caffe,
     llet,
-    putamerda           
+    resBo           
 }
 
 public class CoffeMinigameManager : MonoBehaviour
@@ -37,6 +37,9 @@ public class CoffeMinigameManager : MonoBehaviour
     [SerializeField] private GameObject m_whiskyParticle;
     [SerializeField] private GameObject m_spillParticle;
     [EndFoldout]
+
+    [SerializeField] private GameObject m_commanaSprite;
+
 
     private Dictionary<drinkType, float> m_drinkOrder;
 
@@ -111,6 +114,13 @@ public class CoffeMinigameManager : MonoBehaviour
 
     private void SetOrder(Dictionary<drinkType, float> order)
     {
+
+        if (order == null)
+            m_commanaSprite.SetActive(false);
+        else
+            m_commanaSprite.SetActive(true);
+
+
         m_drinkOrder = order;
         ShowOrder(m_drinkOrder);
     }
@@ -122,7 +132,7 @@ public class CoffeMinigameManager : MonoBehaviour
 
     private void ShowOrder(Dictionary<drinkType, float> order)
     {
-        string orderText = "Order:<br>";
+        string orderText = "";
 
         //Dictionary<drinkType, float> drinks = m_tray.GetDrinksTypes();
         if (order != null)

@@ -24,6 +24,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] private PlayerInput m_dialogueInput;
     [SerializeField] private PlayerInput m_pauseInput; //not inplemented
 
+    [SerializeField] private GameObject m_endMenu;
+    [SerializeField] private GameObject m_pauseMenu;
+
+
     [Foldout("Virtual Cameras")]
     [SerializeField] private GameObject[] m_virtualCameras;
     [EndFoldout]
@@ -33,6 +37,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Texture2D m_cursorDrag;
     [SerializeField] private Texture2D m_cursorDragging;
     [EndFoldout]
+
+    private int ordersReady = 4;
 
     private GameObject m_myEventSystem;
 
@@ -88,8 +94,24 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         m_CurrentState = state.player;
+        m_pauseMenu.SetActive(false);
         PauseGame();
     }
+
+    public void OrderReady()
+    {
+        ordersReady--;
+        if (ordersReady == 0)
+            Invoke("EndGame", 1f);
+    }
+    
+    private void EndGame()
+    {
+        m_endMenu.SetActive(true);
+    }
+
+
+
     #region Dialogue
     public void EnterDialogue(TextAsset inkJSON)
     {
@@ -205,6 +227,9 @@ public class GameManager : MonoBehaviour
     {
         m_canOpenPauseMenu = false;
 
+
+
+
         if (m_CurrentState == state.player)
             m_playerInput.actions.FindActionMap("Player").Disable();
         else if (m_CurrentState == state.dialogue)
@@ -218,6 +243,7 @@ public class GameManager : MonoBehaviour
         //m_pauseInput.actions.FindActionMap("Player").Disable();
 
         m_canOpenPauseMenu = true;
+        m_pauseMenu.SetActive(false);
 
         if (m_CurrentState == state.player)
             m_playerInput.actions.FindActionMap("Player").Enable();
@@ -230,6 +256,9 @@ public class GameManager : MonoBehaviour
     {
         if (!context.performed || !m_canOpenPauseMenu)
             return;
+
+        m_pauseMenu.SetActive(true);
+        PauseGame();
 
         Debug.Log("OpenPauseMenu");
     }

@@ -102,7 +102,7 @@ MonoBehaviour:
   m_spriteFrontR: {fileID: 21300000, guid: 20a43c1894c836d4fa10664b8eb546d5, type: 3}
   m_spriteBackL: {fileID: 21300000, guid: c5e06229b07b0084ea92e639f0ce29cb, type: 3}
   m_spriteBackR: {fileID: 21300000, guid: aecbed93a041cff448622695e329ae80, type: 3}
-  m_spriteCharacterFrontL: {fileID: 21300000, guid: e11436225ea806f4d8a321cbc75e31a1, type: 3}
-  m_spriteCharacterFrontR: {fileID: 21300000, guid: b8ec90ffb6f9e2740a12b95cfed75209, type: 3}
-  m_spriteCharacterBackL: {fileID: 21300000, guid: 8732d2353e8e2534dab4d25bd9abef21, type: 3}
-  m_spriteCharacterBackR: {fileID: 21300000, guid: 38ae1706d2e17d849973fb2dd5496196, type: 3}
+  m_spriteCharacterFrontL: {fileID: 21300000, guid: 82f5573604ce6864c931af1d10f8fece, type: 3}
+  m_spriteCharacterFrontR: {fileID: 21300000, guid: d2190fe4cbaa64b408d7d6d8cd97795a, type: 3}
+  m_spriteCharacterBackL: {fileID: 21300000, guid: b6363dac82525b24d8b172775efa5d66, type: 3}
+  m_spriteCharacterBackR: {fileID: 21300000, guid: 1a60bcbb4b049bf44a9b0ca2fb8186f6, type: 3}

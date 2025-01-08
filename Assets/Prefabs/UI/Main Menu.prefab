@@ -34,7 +34,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -647.9999, y: 385}
+  m_AnchoredPosition: {x: -660, y: 281}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8678328065215772802
@@ -65,12 +65,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Histories de Bar
-
-'
+  m_text: "Hist\xF2ries de Bar\n"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: d5c14cdec19847b41af8e5cff2ff4bf6, type: 2}
-  m_sharedMaterial: {fileID: 5868050935184205235, guid: d5c14cdec19847b41af8e5cff2ff4bf6, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 59835c7acc9b32549b98d3a8feea5940, type: 2}
+  m_sharedMaterial: {fileID: -3301929109608796612, guid: 59835c7acc9b32549b98d3a8feea5940, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -94,15 +92,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 100
-  m_fontSizeBase: 100
+  m_fontSize: 90
+  m_fontSizeBase: 90
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 512
+  m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -130,7 +128,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: -806.0537, w: -153.56905}
+  m_margin: {x: 0, y: -127.770615, z: -765.5245, w: -274.9451}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -292,7 +290,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -528, y: 0}
+  m_AnchoredPosition: {x: 551, y: -141}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2243013775256938317
@@ -356,7 +354,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 618, y: -386}
+  m_AnchoredPosition: {x: -479, y: -323}
   m_SizeDelta: {x: 326.03, y: 150.8}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &1670541292732054887
@@ -431,8 +429,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "Pere Ruiz Mar\xEDn"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: d5c14cdec19847b41af8e5cff2ff4bf6, type: 2}
-  m_sharedMaterial: {fileID: 5868050935184205235, guid: d5c14cdec19847b41af8e5cff2ff4bf6, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: cec3e2008b7e1c54b86b9607f0b3bb7e, type: 2}
+  m_sharedMaterial: {fileID: 3383614185132311552, guid: cec3e2008b7e1c54b86b9607f0b3bb7e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -456,8 +454,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 50
-  m_fontSizeBase: 50
+  m_fontSize: 45
+  m_fontSizeBase: 45
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -492,7 +490,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -92.38414, y: 0, z: 0, w: 0}
+  m_margin: {x: -117.49687, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -551,6 +549,26 @@ PrefabInstance:
     - target: {fileID: 7807164412468595743, guid: 6cd8bfaae10f12247b2ef2a1d5efc16a, type: 3}
       propertyPath: m_text
       value: Start
+      objectReference: {fileID: 0}
+    - target: {fileID: 7807164412468595743, guid: 6cd8bfaae10f12247b2ef2a1d5efc16a, type: 3}
+      propertyPath: m_fontSize
+      value: 35
+      objectReference: {fileID: 0}
+    - target: {fileID: 7807164412468595743, guid: 6cd8bfaae10f12247b2ef2a1d5efc16a, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: cec3e2008b7e1c54b86b9607f0b3bb7e, type: 2}
+    - target: {fileID: 7807164412468595743, guid: 6cd8bfaae10f12247b2ef2a1d5efc16a, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 35
+      objectReference: {fileID: 0}
+    - target: {fileID: 7807164412468595743, guid: 6cd8bfaae10f12247b2ef2a1d5efc16a, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 3383614185132311552, guid: cec3e2008b7e1c54b86b9607f0b3bb7e, type: 2}
+    - target: {fileID: 7807164412468595743, guid: 6cd8bfaae10f12247b2ef2a1d5efc16a, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8364417226821154319, guid: 6cd8bfaae10f12247b2ef2a1d5efc16a, type: 3}
       propertyPath: m_Pivot.x
@@ -676,6 +694,26 @@ PrefabInstance:
     - target: {fileID: 7807164412468595743, guid: 6cd8bfaae10f12247b2ef2a1d5efc16a, type: 3}
       propertyPath: m_text
       value: Quit Game
+      objectReference: {fileID: 0}
+    - target: {fileID: 7807164412468595743, guid: 6cd8bfaae10f12247b2ef2a1d5efc16a, type: 3}
+      propertyPath: m_fontSize
+      value: 35
+      objectReference: {fileID: 0}
+    - target: {fileID: 7807164412468595743, guid: 6cd8bfaae10f12247b2ef2a1d5efc16a, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: cec3e2008b7e1c54b86b9607f0b3bb7e, type: 2}
+    - target: {fileID: 7807164412468595743, guid: 6cd8bfaae10f12247b2ef2a1d5efc16a, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 35
+      objectReference: {fileID: 0}
+    - target: {fileID: 7807164412468595743, guid: 6cd8bfaae10f12247b2ef2a1d5efc16a, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 3383614185132311552, guid: cec3e2008b7e1c54b86b9607f0b3bb7e, type: 2}
+    - target: {fileID: 7807164412468595743, guid: 6cd8bfaae10f12247b2ef2a1d5efc16a, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8364417226821154319, guid: 6cd8bfaae10f12247b2ef2a1d5efc16a, type: 3}
       propertyPath: m_Pivot.x

@@ -1,17 +1,12 @@
 using DG.Tweening;
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using VInspector;
 
 public class PauseMenu : MonoBehaviour
 {
 
-    [SerializeField] private GameObject m_content;
-
-    [SerializeField] private Image m_background;
     [SerializeField] private TextMeshProUGUI m_title;
 
     [SerializeField] private Button[] m_buttons;
@@ -20,23 +15,16 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private float m_cameraMovementTime = 8;
 
 
-    private void Start()
+    private void OnEnable()
     {
-        m_content.SetActive(false);
+        Debug.Log("Helooooow");
+        StartCoroutine(ShowMenu());
     }
 
-    [Button]
-    private void OpenMenu()
+    private IEnumerator ShowMenu()
     {
-        ShowMenu();
-    }
-
-    private void ShowMenu()
-    {
-        m_content.SetActive(true);
-
-        m_title.alpha = 0;
-        m_background.DOFade(0, 0);
+        m_title.maxVisibleCharacters = 0;
+        m_title.alpha = 1;
 
         //Hide Buttons
         foreach (Button button in m_buttons)
@@ -46,30 +34,61 @@ public class PauseMenu : MonoBehaviour
         }
 
         //Hide credits
-        m_credits.alpha = 0;
+        m_credits.maxVisibleCharacters = 0;
 
-        m_title.DOFade(1, 0.3f);
+
+        yield return new WaitForSecondsRealtime(0.2f);
+
+        while (m_title.maxVisibleCharacters < m_title.text.Length)
+        {
+            m_title.maxVisibleCharacters++;
+            yield return new WaitForSecondsRealtime(0.02f);
+        }
+
 
         Sequence sequence = DOTween.Sequence();
         sequence
-            .Insert(0, m_buttons[0].image.DOFillAmount(1, 0.5f).SetEase(Ease.InOutCirc))
-            .Insert(0.1f, m_buttons[1].image.DOFillAmount(1, 0.5f).SetEase(Ease.InOutCirc));
-        //.Insert(0.2f, m_buttons[2].image.DOFillAmount(1, 0.5f).SetEase(Ease.InOutCirc));
+            .Insert(0, m_buttons[0].image.DOFillAmount(1, 0.3f).SetEase(Ease.InOutCirc))
+            .Insert(0.1f, m_buttons[1].image.DOFillAmount(1, 0.3f).SetEase(Ease.InOutCirc));
+            //.Insert(0.2f, m_buttons[2].image.DOFillAmount(1, 0.5f).SetEase(Ease.InOutCirc));
 
         sequence
-            .Insert(0.3f, m_buttons[0].GetComponentInChildren<TextMeshProUGUI>().DOFade(1, 0.2f))
-            .Insert(0.4f, m_buttons[1].GetComponentInChildren<TextMeshProUGUI>().DOFade(1, 0.2f));
+            .Insert(0.3f, m_buttons[0].GetComponentInChildren<TextMeshProUGUI>().DOFade(1, 0.15f))
+            .Insert(0.4f, m_buttons[1].GetComponentInChildren<TextMeshProUGUI>().DOFade(1, 0.15f));
         //.Insert(0.5f, m_buttons[2].GetComponentInChildren<TextMeshProUGUI>().DOFade(1, 0.2f));
 
-        sequence
-            .Insert(0.3f, m_credits.DOFade(1, 0.2f))
-            .Insert(0.1f, m_background.DOFade(0.3f, 0.2f));
-
-
-        sequence.AppendInterval(0.1f);
+        sequence.AppendInterval(0.07f);
         sequence.SetUpdate(true);
 
-
-        //return sequence.Duration();
+        StartCoroutine(ShowCredits());
     }
+
+
+    private IEnumerator ShowCredits()
+    {
+        while (m_credits.maxVisibleCharacters < m_credits.text.Length)
+        {
+            m_credits.GetComponent<TextMeshProUGUI>().maxVisibleCharacters++;
+            yield return new WaitForSecondsRealtime(0.03f);
+        }
+    }
+
+    #region Buttons
+    public void ResumeGame()
+    {
+        gameObject.SetActive(false);
+        GameManager.GetInstance().ResumeGame();
+    }
+
+    public void Quit()
+    {
+#if UNITY_STANDALONE
+        Invoke("Application.Quit()", 2f);
+#endif
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
+    }
+
+    #endregion
 }
