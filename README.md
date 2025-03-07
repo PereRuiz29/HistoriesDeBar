@@ -4,6 +4,8 @@ This is the prototype of a narrative game set in a bar. This project was carried
 
 Ichi.io page: https://pruizmarin.itch.io/histries-de-bar
 
+The game is in Catalan
+
 ### Controls ###
 
 * WASD: Walk
